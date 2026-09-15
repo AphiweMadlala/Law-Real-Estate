@@ -1,4 +1,4 @@
-const { head, header, footer, breadcrumb } = require("../partials");
+const { head, header, footer, breadcrumb, withBase } = require("../partials");
 const { SITE_URL } = require("../config");
 
 function sellPage(company) {
@@ -40,7 +40,7 @@ function sellPage(company) {
           </div>
           <div>
             <h3 style="font-size:var(--step-1);">A proven, high-value track record</h3>
-            <p>From R450,000 apartments to sales well over R15 million, LAW's <a class="link-underline" href="/notable-sales.html">Notable Sales</a> record spans the full spectrum of Johannesburg residential property.</p>
+            <p>From R450,000 apartments to sales well over R15 million, LAW's <a class="link-underline" href="${withBase("/notable-sales.html")}">Notable Sales</a> record spans the full spectrum of Johannesburg residential property.</p>
           </div>
         </div>
       </div>
@@ -50,7 +50,7 @@ function sellPage(company) {
       <div class="container text-center" style="max-width:60ch; margin-inline:auto;">
         <p class="eyebrow" style="justify-content:center;">Get Started</p>
         <h2>Request a no-obligation property appraisal</h2>
-        <p class="muted">Speak directly to the Glenanda head office, or reach out to an agent local to your suburb via the <a href="/team.html" style="color:#fff; text-decoration:underline;">team page</a>.</p>
+        <p class="muted">Speak directly to the Glenanda head office, or reach out to an agent local to your suburb via the <a href="${withBase("/team.html")}" style="color:#fff; text-decoration:underline;">team page</a>.</p>
         <div class="hero__actions" style="justify-content:center; margin-top: var(--space-md);">
           <a href="tel:+27116823865" class="btn btn-accent">Call +27 (0)11 682 3865</a>
           <a href="mailto:laura@lawrealestate.co.za?subject=Property%20Appraisal%20Request" class="btn btn-outline" style="border-color:rgba(251,248,242,0.4); color:#fff;">Email LAW</a>

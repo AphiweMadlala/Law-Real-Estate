@@ -1,5 +1,5 @@
 const { head, header, footer, breadcrumb, escapeHtml } = require("../partials");
-const { propertyCard } = require("../format");
+const { propertyCard, withBase } = require("../format");
 const { SITE_URL } = require("../config");
 
 function agentDetailPage(agent, listings) {
@@ -30,7 +30,7 @@ function agentDetailPage(agent, listings) {
       <div class="container" style="display:grid; gap: var(--space-xl); grid-template-columns: 1fr;">
         <div class="agent-profile-layout">
           <div style="aspect-ratio:3/4; overflow:hidden; border-radius: var(--radius-md); background: var(--stone);">
-            <img src="${agent.photo}" alt="${escapeHtml(agent.name)}" style="width:100%; height:100%; object-fit:cover; transform: scale(1.8); transform-origin: 50% 42%;" width="480" height="640" />
+            <img src="${withBase(agent.photo)}" alt="${escapeHtml(agent.name)}" style="width:100%; height:100%; object-fit:cover; transform: scale(1.8); transform-origin: 50% 42%;" width="480" height="640" />
           </div>
           <div>
             <p class="eyebrow">${escapeHtml(agent.title || "Estate Agent")}</p>

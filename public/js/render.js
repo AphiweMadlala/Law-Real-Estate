@@ -1,5 +1,6 @@
 // Browser-side (ESM) mirror of templates/format.js — kept dependency-free
 // so it can run directly in the browser without a bundler.
+import { BASE_PATH } from "./config.js";
 
 export function formatPrice(price, currency = "ZAR", onApplication = false) {
   if (onApplication || price === null || price === undefined) return "Price on Application";
@@ -8,7 +9,7 @@ export function formatPrice(price, currency = "ZAR", onApplication = false) {
 }
 
 export function propertyCard(p, { eager = false } = {}) {
-  const img = p.images && p.images[0] ? p.images[0] : "/images/brand/placeholder.svg";
+  const img = BASE_PATH + (p.images && p.images[0] ? p.images[0] : "/images/brand/placeholder.svg");
   const specs = [];
   if (p.bedrooms) specs.push(`<span>${p.bedrooms} Bed</span>`);
   if (p.bathrooms) specs.push(`<span>${p.bathrooms} Bath</span>`);
@@ -25,6 +26,6 @@ export function propertyCard(p, { eager = false } = {}) {
       <p class="property-card__loc">${p.suburb}, ${p.city}</p>
       ${specs.length ? `<div class="property-card__specs">${specs.join("")}</div>` : ""}
     </div>
-    <a class="property-card__link" href="/property/${p.reference}/" aria-label="View details for ${p.propertyTypeDisplay || p.propertyType} in ${p.suburb}, ${p.city}, ${formatPrice(p.price, p.currency, p.priceOnApplication)}"></a>
+    <a class="property-card__link" href="${BASE_PATH}/property/${p.reference}/" aria-label="View details for ${p.propertyTypeDisplay || p.propertyType} in ${p.suburb}, ${p.city}, ${formatPrice(p.price, p.currency, p.priceOnApplication)}"></a>
   </article>`;
 }

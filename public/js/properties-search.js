@@ -1,4 +1,5 @@
 import { formatPrice, propertyCard } from "./render.js";
+import { BASE_PATH } from "./config.js";
 
 const grid = document.getElementById("resultsGrid");
 const countEl = document.getElementById("resultsCount");
@@ -72,7 +73,7 @@ function render(results) {
 }
 
 async function init() {
-  const res = await fetch("/data/properties.json");
+  const res = await fetch(`${BASE_PATH}/data/properties.json`);
   allProperties = await res.json();
   populateLocationOptions(allProperties);
   populateTypeOptions(allProperties);

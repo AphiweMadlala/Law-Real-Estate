@@ -1,7 +1,8 @@
 import { propertyCard } from "./render.js";
+import { BASE_PATH } from "./config.js";
 
 async function loadFeatured() {
-  const res = await fetch("/data/properties.json");
+  const res = await fetch(`${BASE_PATH}/data/properties.json`);
   const properties = await res.json();
 
   const bySignature = [...properties].sort((a, b) => (b.price || 0) - (a.price || 0));
@@ -33,11 +34,11 @@ if (heroSearch) {
     for (const [key, value] of data.entries()) {
       if (value) params.set(key, value);
     }
-    window.location.href = `/properties.html?${params.toString()}`;
+    window.location.href = `${BASE_PATH}/properties.html?${params.toString()}`;
   });
 
   // populate location datalist
-  fetch("/data/properties.json")
+  fetch(`${BASE_PATH}/data/properties.json`)
     .then((r) => r.json())
     .then((properties) => {
       const list = document.getElementById("suburbOptions");

@@ -1,5 +1,5 @@
 const { head, header, footer } = require("../partials");
-const { agentCardCompact, showcaseCard } = require("../format");
+const { agentCardCompact, showcaseCard, withBase } = require("../format");
 const { SITE_URL } = require("../config");
 
 function homePage({ company, notableSales, developments, agents }) {
@@ -12,7 +12,7 @@ function homePage({ company, notableSales, developments, agents }) {
   <main id="main">
     <section class="hero">
       <div class="hero__media">
-        <img src="/images/properties/6751/1.jpg" alt="Grand double-storey residence in Cornwall Hill, Centurion, marketed by LAW Real Estate" width="1600" height="1000" />
+        <img src="${withBase("/images/properties/6751/1.jpg")}" alt="Grand double-storey residence in Cornwall Hill, Centurion, marketed by LAW Real Estate" width="1600" height="1000" />
       </div>
       <div class="hero__scrim"></div>
       <div class="container hero__content">
@@ -20,8 +20,8 @@ function homePage({ company, notableSales, developments, agents }) {
         <h1>Teamwork from the team that works.</h1>
         <p>LAW Real Estate is a residential resale specialist across Johannesburg's southern suburbs, Sandton, Randburg and beyond &mdash; with a boutique luxury new-developments division and an agency built for the way property is marketed today.</p>
         <div class="hero__actions">
-          <a href="/properties.html" class="btn btn-accent">Browse Properties</a>
-          <a href="/sell.html" class="btn btn-outline" style="border-color:rgba(255,255,255,0.5); color:#fff;">Get a Free Appraisal</a>
+          <a href="${withBase("/properties.html")}" class="btn btn-accent">Browse Properties</a>
+          <a href="${withBase("/sell.html")}" class="btn btn-outline" style="border-color:rgba(255,255,255,0.5); color:#fff;">Get a Free Appraisal</a>
         </div>
         <form class="search-panel" id="heroSearch">
           <div class="field">
@@ -61,7 +61,7 @@ function homePage({ company, notableSales, developments, agents }) {
             <h2>Featured Properties</h2>
             <p>A working selection of what's currently on LAW's books &mdash; from entry-level apartments to signature family homes.</p>
           </div>
-          <a href="/properties.html" class="btn btn-outline">View All Properties</a>
+          <a href="${withBase("/properties.html")}" class="btn btn-outline">View All Properties</a>
         </div>
         <div class="grid grid--3" id="featuredGrid"></div>
       </div>
@@ -87,7 +87,7 @@ function homePage({ company, notableSales, developments, agents }) {
             <p class="eyebrow">About LAW</p>
             <h2>The authority in residential resale, built for how property sells today.</h2>
             <p>LAW Real Estate positions itself as "agents of the future" &mdash; pairing traditional residential resale expertise with videography, social and digital marketing. The business is built around sole and exclusive mandates across Johannesburg's southern suburbs, Sandton, Randburg, Boksburg, Roodepoort, Midrand, Bedfordview and surrounds, with a dedicated boutique division for new developments.</p>
-            <a href="/about.html" class="btn btn-outline" style="margin-top: 1rem;">More About LAW</a>
+            <a href="${withBase("/about.html")}" class="btn btn-outline" style="margin-top: 1rem;">More About LAW</a>
           </div>
         </div>
         <div class="stat-grid" style="margin-top: var(--space-xl);">
@@ -119,7 +119,7 @@ function homePage({ company, notableSales, developments, agents }) {
             <h2>Developments &amp; Estates</h2>
             <p>A showcase of estate homes and complex units LAW has sold within named developments &mdash; a track record, not current stock.</p>
           </div>
-          <a href="/developments.html" class="btn btn-outline">View Developments</a>
+          <a href="${withBase("/developments.html")}" class="btn btn-outline">View Developments</a>
         </div>
         <div class="grid grid--4">
           ${developments.slice(0, 4).map((d) => showcaseCard(d, { kind: "dev" })).join("")}
@@ -135,7 +135,7 @@ function homePage({ company, notableSales, developments, agents }) {
             <h2>Recent Notable Sales</h2>
             <p>A selection of LAW's highest-value concluded transactions across Johannesburg's premier suburbs.</p>
           </div>
-          <a href="/notable-sales.html" class="btn btn-outline">View All Notable Sales</a>
+          <a href="${withBase("/notable-sales.html")}" class="btn btn-outline">View All Notable Sales</a>
         </div>
         <div class="grid grid--4">
           ${notableSales.slice(0, 4).map((n) => showcaseCard(n, { kind: "notable" })).join("")}
@@ -151,7 +151,7 @@ function homePage({ company, notableSales, developments, agents }) {
             <h2>The People Behind Every Mandate</h2>
             <p>Directors, professional practitioners and a growing bench of candidate agents across four Johannesburg offices.</p>
           </div>
-          <a href="/team.html" class="btn btn-outline">Meet The Full Team</a>
+          <a href="${withBase("/team.html")}" class="btn btn-outline">Meet The Full Team</a>
         </div>
         <div class="grid grid--3">
           ${leadership.map(agentCardCompact).join("")}
@@ -165,14 +165,14 @@ function homePage({ company, notableSales, developments, agents }) {
         <h2>Get a considered, data-backed appraisal from a team that markets property properly.</h2>
         <p class="muted">No obligation. Real photography, video and digital marketing from day one &mdash; not just a board on the lawn.</p>
         <div class="hero__actions" style="justify-content:center; margin-top: var(--space-md);">
-          <a href="/sell.html" class="btn btn-accent">Sell With LAW</a>
+          <a href="${withBase("/sell.html")}" class="btn btn-accent">Sell With LAW</a>
           <a href="tel:+27116823865" class="btn btn-outline" style="border-color:rgba(251,248,242,0.4); color:#fff;">Call +27 (0)11 682 3865</a>
         </div>
       </div>
     </section>
   </main>
   ${footer()}
-  <script type="module" src="/js/home.js"></script>`;
+  <script type="module" src="${withBase("/js/home.js")}"></script>`;
 
   const headHtml = head({
     title: "LAW Real Estate — Johannesburg Residential Property Specialists",

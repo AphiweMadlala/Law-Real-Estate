@@ -1,9 +1,9 @@
-const { head, header, footer, breadcrumb, escapeHtml } = require("../partials");
+const { head, header, footer, breadcrumb, escapeHtml, withBase } = require("../partials");
 const { formatPrice } = require("../format");
 const { SITE_URL } = require("../config");
 
 function notableCard(n) {
-  const img = n.images[0] || "/images/brand/placeholder.svg";
+  const img = withBase(n.images[0] || "/images/brand/placeholder.svg");
   return `<article class="showcase-card">
     <div class="showcase-card__media">
       <img src="${img}" alt="${escapeHtml(n.propertyType)} in ${escapeHtml(n.suburb)}, ${escapeHtml(n.city)}" loading="lazy" />
@@ -39,7 +39,7 @@ function notableSalesPage(notableSales) {
       <div class="container text-center" style="max-width:60ch; margin-inline:auto;">
         <h2 style="font-size:var(--step-2);">Considering a sale in this bracket?</h2>
         <p class="muted">LAW's marketing approach &mdash; professional photography, video and digital promotion &mdash; is built for exactly this kind of property.</p>
-        <a href="/sell.html" class="btn btn-accent" style="margin-top:1rem;">Sell With LAW</a>
+        <a href="${withBase("/sell.html")}" class="btn btn-accent" style="margin-top:1rem;">Sell With LAW</a>
       </div>
     </section>
   </main>

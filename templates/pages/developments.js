@@ -1,9 +1,9 @@
-const { head, header, footer, breadcrumb, escapeHtml } = require("../partials");
+const { head, header, footer, breadcrumb, escapeHtml, withBase } = require("../partials");
 const { formatPrice } = require("../format");
 const { SITE_URL } = require("../config");
 
 function developmentCard(d) {
-  const img = d.images[0] || "/images/brand/placeholder.svg";
+  const img = withBase(d.images[0] || "/images/brand/placeholder.svg");
   return `<article class="showcase-card">
     <div class="showcase-card__media">
       <img src="${img}" alt="${escapeHtml(d.propertyType)} in ${escapeHtml(d.estateName)}, ${escapeHtml(d.city)}" loading="lazy" />
@@ -25,7 +25,7 @@ function developmentsPage(developments) {
         ${breadcrumb([{ href: "/developments.html", label: "Developments" }])}
         <p class="eyebrow">Estate &amp; Development Track Record</p>
         <h1 style="font-size: var(--step-4); margin-bottom:0.3em;">Developments</h1>
-        <p class="muted" style="max-width:64ch;">LAW runs a boutique new-developments division. The units below are units LAW has facilitated within named estates and complexes &mdash; every one shown here is <strong>already sold</strong>, presented as a track record rather than current stock. For live development opportunities, <a class="link-underline" href="/sell.html">get in touch</a> directly.</p>
+        <p class="muted" style="max-width:64ch;">LAW runs a boutique new-developments division. The units below are units LAW has facilitated within named estates and complexes &mdash; every one shown here is <strong>already sold</strong>, presented as a track record rather than current stock. For live development opportunities, <a class="link-underline" href="${withBase("/sell.html")}">get in touch</a> directly.</p>
       </div>
     </div>
     <section class="section--tight">

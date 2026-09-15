@@ -1,5 +1,5 @@
 const { head, header, footer, breadcrumb, escapeHtml } = require("../partials");
-const { formatPrice, propertyCard } = require("../format");
+const { formatPrice, propertyCard, withBase } = require("../format");
 const { SITE_URL } = require("../config");
 
 function relatedProperties(current, all) {
@@ -28,13 +28,13 @@ function galleryHtml(images, title) {
     ${shown
       .map((src, i) => {
         const isLast = i === shown.length - 1 && images.length > shown.length;
-        return `<a href="${src}" data-index="${i}" aria-label="Open photo ${i + 1} of ${images.length} in fullscreen gallery">
-          <img src="${src}" alt="${escapeHtml(title)} — photo ${i + 1} of ${images.length}" loading="${i === 0 ? "eager" : "lazy"}" />
+        return `<a href="${withBase(src)}" data-index="${i}" aria-label="Open photo ${i + 1} of ${images.length} in fullscreen gallery">
+          <img src="${withBase(src)}" alt="${escapeHtml(title)} — photo ${i + 1} of ${images.length}" loading="${i === 0 ? "eager" : "lazy"}" />
           ${isLast ? `<span class="gallery__more">+${images.length - shown.length} more</span>` : ""}
         </a>`;
       })
       .join("")}
-    ${images.slice(5).map((src, i) => `<a href="${src}" data-index="${i + 5}" style="display:none;" aria-label="Open photo ${i + 6} of ${images.length} in fullscreen gallery"><img src="${src}" alt="${escapeHtml(title)} — photo ${i + 6}" loading="lazy" /></a>`).join("")}
+    ${images.slice(5).map((src, i) => `<a href="${withBase(src)}" data-index="${i + 5}" style="display:none;" aria-label="Open photo ${i + 6} of ${images.length} in fullscreen gallery"><img src="${withBase(src)}" alt="${escapeHtml(title)} — photo ${i + 6}" loading="lazy" /></a>`).join("")}
   </div>`;
 }
 
@@ -52,7 +52,7 @@ function agentCardHtml(agent) {
     ? `<a class="icon-btn" href="mailto:${agent.email}">Email</a>`
     : "";
   return `<div class="agent-card">
-    <div class="agent-card__photo-wrap"><img src="${agent.photo}" alt="${escapeHtml(agent.name)}" loading="lazy" width="84" height="84" /></div>
+    <div class="agent-card__photo-wrap"><img src="${withBase(agent.photo)}" alt="${escapeHtml(agent.name)}" loading="lazy" width="84" height="84" /></div>
     <div>
       <p class="agent-card__name">${escapeHtml(agent.name)}</p>
       <p class="agent-card__title">${escapeHtml(agent.title || "Estate Agent")}</p>
@@ -164,7 +164,7 @@ function propertyDetailPage(property, allProperties) {
     }
   </main>
   ${footer()}
-  <script type="module" src="/js/gallery.js"></script>
+  <script type="module" src="${withBase("/js/gallery.js")}"></script>
   <style>
     @media (min-width: 960px) {
       .detail-layout { grid-template-columns: 1fr 340px !important; align-items: start; }

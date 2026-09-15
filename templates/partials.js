@@ -1,6 +1,21 @@
 // Shared HTML partials used by every generated page.
 // Plain Node (CommonJS), no external dependencies.
 
+const { BASE_PATH } = require("./config");
+
+// Prefix a root-relative path ("/", "/properties.html", "/images/x.jpg") with
+// BASE_PATH so it resolves correctly when the site is served from a subpath
+// (e.g. GitHub Pages project sites: /Law-Real-Estate/...). NAV_LINKS below
+// stays unprefixed so activeHref comparisons stay simple; withBase() is only
+// applied at render time.
+function withBase(path) {
+  if (/^https?:\/\//.test(path) || path.startsWith("mailto:") || path.startsWith("tel:")) {
+    return path;
+  }
+  if (path === "/") return `${BASE_PATH}/`;
+  return `${BASE_PATH}${path}`;
+}
+
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/properties.html", label: "Properties" },
@@ -37,22 +52,22 @@ function head({ title, description, canonical, ogImage, structuredData }) {
   <meta property="og:url" content="${canonical}" />
   ${ogImage ? `<meta property="og:image" content="${ogImage}" />` : ""}
   <meta name="twitter:card" content="summary_large_image" />
-  <link rel="icon" href="/images/brand/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="/css/tokens.css" />
-  <link rel="stylesheet" href="/css/base.css" />
-  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="icon" href="${withBase("/images/brand/favicon.svg")}" type="image/svg+xml" />
+  <link rel="stylesheet" href="${withBase("/css/tokens.css")}" />
+  <link rel="stylesheet" href="${withBase("/css/base.css")}" />
+  <link rel="stylesheet" href="${withBase("/css/components.css")}" />
   ${sd}`;
 }
 
 function header(activeHref) {
   const items = NAV_LINKS.map((l) => {
     const current = l.href === activeHref ? ` aria-current="page"` : "";
-    return `<li><a href="${l.href}"${current}>${l.label}</a></li>`;
+    return `<li><a href="${withBase(l.href)}"${current}>${l.label}</a></li>`;
   }).join("");
   return `<a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="container site-header__bar">
-      <a href="/" class="wordmark" aria-label="LAW Real Estate, home">
+      <a href="${withBase("/")}" class="wordmark" aria-label="LAW Real Estate, home">
         <span class="wordmark__name"><strong>LAW</strong> Real Estate</span>
         <span class="wordmark__tag">Johannesburg &amp; Gauteng</span>
       </a>
@@ -60,7 +75,7 @@ function header(activeHref) {
         <ul>${items}</ul>
       </nav>
       <div class="header-actions">
-        <a href="/sell.html" class="btn btn-outline btn-sm">Sell With LAW</a>
+        <a href="${withBase("/sell.html")}" class="btn btn-outline btn-sm">Sell With LAW</a>
         <a href="tel:+27116823865" class="btn btn-primary btn-sm">Call Us</a>
         <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
           <span class="nav-toggle__bars"></span>
@@ -74,11 +89,11 @@ function header(activeHref) {
       <button class="mobile-nav__close" id="mobileNavClose" aria-label="Close menu">&times;</button>
     </div>
     <nav aria-label="Mobile">
-      <ul>${NAV_LINKS.map((l) => `<li><a href="${l.href}">${l.label}</a></li>`).join("")}</ul>
+      <ul>${NAV_LINKS.map((l) => `<li><a href="${withBase(l.href)}">${l.label}</a></li>`).join("")}</ul>
     </nav>
     <div class="mobile-nav__footer">
       <a href="tel:+27116823865" class="btn btn-primary btn-block">Call +27 (0)11 682 3865</a>
-      <a href="/sell.html" class="btn btn-outline btn-block">Sell With LAW</a>
+      <a href="${withBase("/sell.html")}" class="btn btn-outline btn-block">Sell With LAW</a>
     </div>
   </div>`;
 }
@@ -95,18 +110,18 @@ function footer() {
         <div>
           <h4>Explore</h4>
           <ul>
-            <li><a href="/properties.html">Properties For Sale</a></li>
-            <li><a href="/developments.html">Developments</a></li>
-            <li><a href="/notable-sales.html">Notable Sales</a></li>
-            <li><a href="/team.html">Our Team</a></li>
+            <li><a href="${withBase("/properties.html")}">Properties For Sale</a></li>
+            <li><a href="${withBase("/developments.html")}">Developments</a></li>
+            <li><a href="${withBase("/notable-sales.html")}">Notable Sales</a></li>
+            <li><a href="${withBase("/team.html")}">Our Team</a></li>
           </ul>
         </div>
         <div>
           <h4>Company</h4>
           <ul>
-            <li><a href="/about.html">About LAW</a></li>
-            <li><a href="/sell.html">Sell With LAW</a></li>
-            <li><a href="/contact.html">Contact &amp; Offices</a></li>
+            <li><a href="${withBase("/about.html")}">About LAW</a></li>
+            <li><a href="${withBase("/sell.html")}">Sell With LAW</a></li>
+            <li><a href="${withBase("/contact.html")}">Contact &amp; Offices</a></li>
             <li><a href="https://www.instagram.com/lawrealestate" target="_blank" rel="noopener">Instagram</a></li>
           </ul>
         </div>
@@ -125,7 +140,7 @@ function footer() {
       </div>
     </div>
   </footer>
-  <script type="module" src="/js/nav.js"></script>`;
+  <script type="module" src="${withBase("/js/nav.js")}"></script>`;
 }
 
 function breadcrumb(items) {
@@ -133,10 +148,10 @@ function breadcrumb(items) {
     .map((it, i) => {
       const isLast = i === items.length - 1;
       const sep = i > 0 ? `<span class="breadcrumb__sep">/</span>` : "";
-      return `${sep}${isLast ? `<span>${escapeHtml(it.label)}</span>` : `<a href="${it.href}">${escapeHtml(it.label)}</a>`}`;
+      return `${sep}${isLast ? `<span>${escapeHtml(it.label)}</span>` : `<a href="${withBase(it.href)}">${escapeHtml(it.label)}</a>`}`;
     })
     .join("");
-  return `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a>${parts}</nav>`;
+  return `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="${withBase("/")}">Home</a>${parts}</nav>`;
 }
 
 function page({ lang = "en-ZA", headHtml, bodyHtml, bodyClass = "" }) {
@@ -152,4 +167,4 @@ ${bodyHtml}
 `;
 }
 
-module.exports = { NAV_LINKS, escapeHtml, head, header, footer, breadcrumb, page };
+module.exports = { NAV_LINKS, escapeHtml, head, header, footer, breadcrumb, page, withBase };

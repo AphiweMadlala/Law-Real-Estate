@@ -1,4 +1,4 @@
-const { head, header, footer, breadcrumb } = require("../partials");
+const { head, header, footer, breadcrumb, withBase } = require("../partials");
 const { SITE_URL } = require("../config");
 
 function aboutPage(company) {
@@ -37,8 +37,8 @@ function aboutPage(company) {
         <h2 style="font-size:var(--step-2);">Want to work with LAW?</h2>
         <p class="muted">Whether you're buying, selling, or just want to talk through the market, the team is one call away.</p>
         <div class="hero__actions" style="justify-content:center; margin-top:1rem;">
-          <a href="/team.html" class="btn btn-primary">Meet The Team</a>
-          <a href="/contact.html" class="btn btn-outline">Contact &amp; Offices</a>
+          <a href="${withBase("/team.html")}" class="btn btn-primary">Meet The Team</a>
+          <a href="${withBase("/contact.html")}" class="btn btn-outline">Contact &amp; Offices</a>
         </div>
       </div>
     </section>
