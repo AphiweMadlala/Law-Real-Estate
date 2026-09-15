@@ -1,0 +1,39 @@
+{
+  "name": "LAW Real Estate",
+  "legalNote": "Trading name as presented on the source website; full legal/FFC entity details not published on-site.",
+  "tagline": "Teamwork from the team that works!",
+  "positioning": "LAW Real Estate positions itself as \"agents of the future\", emphasising videography, social and digital marketing expertise alongside traditional residential resale service.",
+  "focus": [
+    "Residential resales in Johannesburg (southern suburbs, Sandton, Randburg, Boksburg, Roodepoort, Midrand, Bedfordview, Germiston, Benoni, Krugersdorp, Centurion and surrounds)",
+    "A boutique luxury new-development division",
+    "Atlantic Seaboard / Cape Town activity is handled via a related but separately hosted site (lawrealestatecpt.co.za); no Cape Town listings currently appear in the Johannesburg site's active sitemap"
+  ],
+  "stats": [
+    {
+      "label": "Sole & exclusive mandates",
+      "value": "1,000+",
+      "source": "https://www.lawrealestate.co.za/",
+      "note": "Figure as published on the current LAW Real Estate homepage; not independently verified."
+    },
+    {
+      "label": "Portfolio value",
+      "value": "R5.7 billion+",
+      "source": "https://www.lawrealestate.co.za/",
+      "note": "Figure as published on the current LAW Real Estate homepage; not independently verified."
+    }
+  ],
+  "headOffice": {
+    "address": "7 Van Beek Avenue, Glenanda, Johannesburg, South Africa",
+    "phone": "+27 (0)11 682 3865",
+    "phoneAlt": "+27 (0)11 432 3868",
+    "fax": "+27 (0)11 432 3868",
+    "mobile": "+27 (0)83 365 1733",
+    "email": "laura@lawrealestate.co.za"
+  },
+  "socials": {
+    "instagram": "https://www.instagram.com/lawrealestate",
+    "instagramNote": "Public Instagram content could not be extracted programmatically in this environment (Instagram requires an authenticated session for post data, and no Apify/browser-automation access was available). Used only as directional context, not as a data source; see references/SOURCES.md."
+  },
+  "sourceUrl": "https://www.lawrealestate.co.za/",
+  "sourceCapturedAt": "2026-09-15"
+}

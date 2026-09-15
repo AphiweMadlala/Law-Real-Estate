@@ -1,0 +1,42 @@
+[
+  {
+    "id": "glenanda",
+    "name": "Glenanda (Head Office)",
+    "address": "7 Van Beek Avenue, Glenanda, Johannesburg, South Africa",
+    "phone": "+27 (0)11 682 3865",
+    "fax": "+27 (0)11 432 3868",
+    "mobile": "+27 (0)83 365 1733",
+    "email": "laura@lawrealestate.co.za",
+    "sourceUrl": "https://www.lawrealestate.co.za/template/ContactUs.vm"
+  },
+  {
+    "id": "glenvista",
+    "name": "Glenvista",
+    "address": "11 Charmion Avenue, Glenvista, Johannesburg South, 2091",
+    "phone": null,
+    "fax": null,
+    "mobile": null,
+    "email": null,
+    "sourceUrl": "https://www.lawrealestate.co.za/template/ContactUs2.vm"
+  },
+  {
+    "id": "boskruin",
+    "name": "Boskruin",
+    "address": "35 Kelly Ave, Boskruin",
+    "phone": null,
+    "fax": null,
+    "mobile": null,
+    "email": null,
+    "sourceUrl": "https://www.lawrealestate.co.za/template/Boskruin.vm"
+  },
+  {
+    "id": "illovo-junction",
+    "name": "Illovo Junction",
+    "address": "Corner Oxford Rd and Corlett Drive, Illovo",
+    "phone": null,
+    "fax": null,
+    "mobile": null,
+    "email": null,
+    "sourceUrl": "https://www.lawrealestate.co.za/template/IllovoJunction.vm"
+  }
+]
