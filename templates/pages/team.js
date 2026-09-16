@@ -15,7 +15,7 @@ function teamPage(agents) {
   <main id="main">
     <div class="page-head">
       <div class="container">
-        ${breadcrumb([{ href: "/team.html", label: "Our Team" }])}
+        ${breadcrumb([], "Our Team")}
         <p class="eyebrow">Meet LAW</p>
         <h1 style="font-size: var(--step-4); margin-bottom:0.3em;">Our Team</h1>
         <p class="muted" style="max-width:60ch;">${agents.length} directors, professional practitioners and candidate agents across LAW's four Johannesburg offices.</p>

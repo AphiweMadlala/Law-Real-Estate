@@ -1,4 +1,5 @@
 const { head, header, footer, breadcrumb, escapeHtml } = require("../partials");
+const { telHref, waHref } = require("../format");
 const { SITE_URL } = require("../config");
 
 function officeCard(office) {
@@ -6,8 +7,8 @@ function officeCard(office) {
     <h3>${escapeHtml(office.name)}</h3>
     <address>${escapeHtml(office.address)}</address>
     <div class="contact-actions">
-      ${office.phone ? `<a class="icon-btn" href="tel:${office.phone.replace(/[^\d+]/g, "")}">Call</a>` : ""}
-      ${office.email ? `<a class="icon-btn" href="mailto:${office.email}">Email</a>` : ""}
+      ${office.phone ? `<a class="icon-btn" href="${telHref(office.phone)}">Call</a>` : ""}
+      ${office.email ? `<a class="icon-btn" href="mailto:${encodeURIComponent(office.email)}">Email</a>` : ""}
       ${!office.phone && !office.email ? `<span class="muted" style="font-size:0.85rem;">Address published; direct line not listed &mdash; reach this office via Glenanda HQ.</span>` : ""}
     </div>
   </div>`;
@@ -18,7 +19,7 @@ function contactPage(offices, company) {
   <main id="main">
     <div class="page-head">
       <div class="container">
-        ${breadcrumb([{ href: "/contact.html", label: "Contact" }])}
+        ${breadcrumb([], "Contact")}
         <p class="eyebrow">Get In Touch</p>
         <h1 style="font-size: var(--step-4); margin-bottom:0.3em;">Contact &amp; Offices</h1>
         <p class="muted" style="max-width:60ch;">Four offices across Johannesburg. For a fast response, the Glenanda head office handles all general enquiries.</p>
@@ -32,9 +33,9 @@ function contactPage(offices, company) {
             <h3>Glenanda</h3>
             <address>${escapeHtml(company.headOffice.address)}</address>
             <div class="contact-actions">
-              <a class="icon-btn" href="tel:${company.headOffice.phone.replace(/[^\d+]/g, "")}">Call ${company.headOffice.phone}</a>
-              <a class="icon-btn icon-btn--whatsapp" href="https://wa.me/${company.headOffice.mobile.replace(/[^\d]/g, "")}" target="_blank" rel="noopener">WhatsApp</a>
-              <a class="icon-btn" href="mailto:${company.headOffice.email}">Email</a>
+              <a class="icon-btn" href="${telHref(company.headOffice.phone)}">Call ${escapeHtml(company.headOffice.phone)}</a>
+              <a class="icon-btn icon-btn--whatsapp" href="${waHref(company.headOffice.mobile)}" target="_blank" rel="noopener">WhatsApp</a>
+              <a class="icon-btn" href="mailto:${encodeURIComponent(company.headOffice.email)}">Email</a>
             </div>
           </div>
         </div>

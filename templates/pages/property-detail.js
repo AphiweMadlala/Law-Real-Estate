@@ -1,7 +1,13 @@
 const { head, header, footer, breadcrumb, escapeHtml } = require("../partials");
-const { formatPrice, propertyCard, withBase } = require("../format");
+const { formatPrice, propertyCard, withBase, slugify, telHref, normalizeDescription, truncateAtWord, genuineFeatures } = require("../format");
 const { SITE_URL } = require("../config");
 
+// Priority: same suburb, then same city, then same property type as a last
+// resort. That last tier can pull in listings from a completely different
+// city — geographically nothing like "related" — so callers get told
+// whether any *local* match (same suburb/city) actually contributed, and
+// use that to decide between the "Related Properties" and "Similar
+// Properties" heading rather than always claiming a local relationship.
 function relatedProperties(current, all) {
   const others = all.filter((p) => p.reference !== current.reference);
   const sameSuburb = others.filter((p) => p.suburb === current.suburb);
@@ -9,17 +15,21 @@ function relatedProperties(current, all) {
   const sameType = others.filter(
     (p) => p.propertyType === current.propertyType && p.city !== current.city
   );
+  const localRefs = new Set([...sameSuburb, ...sameCity].map((p) => p.reference));
+
   const combined = [...sameSuburb, ...sameCity, ...sameType];
   const seen = new Set();
-  const unique = [];
+  const items = [];
   for (const p of combined) {
     if (!seen.has(p.reference)) {
       seen.add(p.reference);
-      unique.push(p);
+      items.push(p);
     }
-    if (unique.length >= 3) break;
+    if (items.length >= 3) break;
   }
-  return unique;
+
+  const hasLocalMatch = items.some((p) => localRefs.has(p.reference));
+  return { items, hasLocalMatch };
 }
 
 function galleryHtml(images, title) {
@@ -39,23 +49,42 @@ function galleryHtml(images, title) {
 }
 
 function agentCardHtml(agent) {
-  if (!agent || !agent.id) {
+  // Some property-agent records (e.g. the head-office contact) have a real
+  // name/mobile/email but no stable agent ID, photo, or profile page — that
+  // is still genuinely useful contact info and should render, just without
+  // a profile link or photo. Only fall back to the generic message when
+  // there's truly nothing to contact.
+  const hasContactInfo = agent && agent.name && (agent.mobile || agent.email || agent.whatsappNumber);
+  if (!hasContactInfo) {
     return `<div class="agent-card"><p class="muted">Contact LAW Real Estate for more information on this property.</p></div>`;
   }
+
   const waLink = agent.whatsappNumber
     ? `<a class="icon-btn icon-btn--whatsapp" href="https://wa.me/${agent.whatsappNumber}" target="_blank" rel="noopener">WhatsApp</a>`
     : "";
   const callLink = agent.mobile
-    ? `<a class="icon-btn" href="tel:${agent.mobile.replace(/[^\d+]/g, "")}">Call</a>`
+    ? `<a class="icon-btn" href="${telHref(agent.mobile)}">Call</a>`
     : "";
   const emailLink = agent.email
     ? `<a class="icon-btn" href="mailto:${agent.email}">Email</a>`
     : "";
+
+  const photoHtml = agent.photo
+    ? `<img src="${withBase(agent.photo)}" alt="${escapeHtml(agent.name)}" loading="lazy" width="84" height="84" />`
+    : `<span class="agent-card__photo-fallback" aria-hidden="true">${escapeHtml((agent.name || "?").trim().charAt(0))}</span>`;
+
+  // A real profile page only exists for agents with a stable id (build.js
+  // generates /team/<slug>/ from data/agents.json, keyed by id) — never
+  // link to a page that doesn't exist.
+  const nameHtml = agent.id
+    ? `<a class="agent-card__name-link" href="${withBase(`/team/${slugify(agent.name)}/`)}">${escapeHtml(agent.name)}</a>`
+    : escapeHtml(agent.name);
+
   return `<div class="agent-card">
-    <div class="agent-card__photo-wrap"><img src="${withBase(agent.photo)}" alt="${escapeHtml(agent.name)}" loading="lazy" width="84" height="84" /></div>
+    <div class="agent-card__photo-wrap">${photoHtml}</div>
     <div>
-      <p class="agent-card__name">${escapeHtml(agent.name)}</p>
-      <p class="agent-card__title">${escapeHtml(agent.title || "Estate Agent")}</p>
+      <p class="agent-card__name">${nameHtml}</p>
+      ${agent.title ? `<p class="agent-card__title">${escapeHtml(agent.title)}</p>` : ""}
       <div class="agent-card__actions">
         ${callLink}${waLink}${emailLink}
       </div>
@@ -71,18 +100,19 @@ function propertyDetailPage(property, allProperties) {
   if (property.erfSize) specs.push({ label: "Erf Size", value: property.erfSize });
   if (property.floorSize) specs.push({ label: "Floor Size", value: property.floorSize });
 
-  const related = relatedProperties(property, allProperties);
+  const features = genuineFeatures(property.features);
+  const { items: related, hasLocalMatch } = relatedProperties(property, allProperties);
+  const relatedHeading = hasLocalMatch ? "Related Properties" : "Similar Properties";
+  const relatedEyebrow = hasLocalMatch ? "You May Also Like" : "Elsewhere In Our Portfolio";
   const primaryAgent = property.agents && property.agents[0];
   const title = `${property.title} | Ref #${property.reference} | LAW Real Estate`;
-  const description = (property.description || "").replace(/\n+/g, " ").slice(0, 155);
+  const cleanedDescription = normalizeDescription(property.description);
+  const description = truncateAtWord((cleanedDescription || "").replace(/\n+/g, " "), 155);
 
   const bodyHtml = `${header("/properties.html")}
   <main id="main">
     <div class="container" style="padding-top: var(--space-md);">
-      ${breadcrumb([
-        { href: "/properties.html", label: "Properties" },
-        { href: "#", label: `${property.suburb}, ${property.city}` },
-      ])}
+      ${breadcrumb([{ href: "/properties.html", label: "Properties" }], `${property.suburb}, ${property.city}`)}
     </div>
     <div class="container">
       ${galleryHtml(property.images, property.title)}
@@ -94,13 +124,13 @@ function propertyDetailPage(property, allProperties) {
           <div>
             <div class="cluster" style="justify-content:space-between; gap:1rem;">
               <div>
-                <span class="badge badge--active">${property.status}</span>
+                <span class="badge badge--active">${escapeHtml(property.status)}</span>
                 <h1 style="margin-top:0.5em; font-size: var(--step-3);">${escapeHtml(property.title)}</h1>
                 <p class="muted">${escapeHtml(property.suburb)}, ${escapeHtml(property.city)}</p>
               </div>
               <div style="text-align:right;">
                 <p style="font-family:var(--font-display); font-size:var(--step-3); margin:0;">${formatPrice(property.price, property.currency, property.priceOnApplication)}</p>
-                <p class="reference-tag">Ref&nbsp;#${property.reference}</p>
+                <p class="reference-tag">Ref&nbsp;#${escapeHtml(property.reference)}</p>
               </div>
             </div>
 
@@ -114,17 +144,17 @@ function propertyDetailPage(property, allProperties) {
 
             <div class="prose">
               <h2 style="font-size:var(--step-2);">About This Property</h2>
-              ${(property.description || "Contact LAW Real Estate for the full description of this property.")
+              ${(cleanedDescription || "Contact LAW Real Estate for the full description of this property.")
                 .split(/\n\n+/)
                 .map((para) => `<p>${escapeHtml(para).replace(/\n/g, "<br />")}</p>`)
                 .join("")}
             </div>
 
             ${
-              property.features && property.features.length
+              features.length
                 ? `<div style="margin-top: var(--space-lg);">
               <h3 style="font-size:var(--step-1);">Key Features</h3>
-              <ul class="feature-grid">${property.features.map((f) => `<li>${escapeHtml(f)}</li>`).join("")}</ul>
+              <ul class="feature-grid">${features.map((f) => `<li>${escapeHtml(f)}</li>`).join("")}</ul>
             </div>`
                 : ""
             }
@@ -135,10 +165,10 @@ function propertyDetailPage(property, allProperties) {
               ${agentCardHtml(primaryAgent)}
               <div class="office-card">
                 <h3 style="font-size:1rem;">Enquire About This Property</h3>
-                <p class="muted" style="font-size:0.85rem;">Quote reference <strong>#${property.reference}</strong> when you get in touch.</p>
+                <p class="muted" style="font-size:0.85rem;">Quote reference <strong>#${escapeHtml(property.reference)}</strong> when you get in touch.</p>
                 <div class="contact-actions">
                   <a href="tel:+27116823865" class="btn btn-primary btn-sm">Call Office</a>
-                  <a href="mailto:laura@lawrealestate.co.za?subject=Enquiry%20-%20Ref%20${property.reference}" class="btn btn-outline btn-sm">Email Enquiry</a>
+                  <a href="mailto:laura@lawrealestate.co.za?subject=Enquiry%20-%20Ref%20${encodeURIComponent(property.reference)}" class="btn btn-outline btn-sm">Email Enquiry</a>
                 </div>
               </div>
             </div>
@@ -153,8 +183,8 @@ function propertyDetailPage(property, allProperties) {
       <div class="container">
         <div class="section-head">
           <div class="section-head__copy">
-            <p class="eyebrow">You May Also Like</p>
-            <h2 style="font-size:var(--step-2);">Related Properties</h2>
+            <p class="eyebrow">${relatedEyebrow}</p>
+            <h2 style="font-size:var(--step-2);">${relatedHeading}</h2>
           </div>
         </div>
         <div class="grid grid--3">${related.map((p) => propertyCard(p)).join("")}</div>

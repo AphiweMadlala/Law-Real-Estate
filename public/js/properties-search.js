@@ -59,6 +59,10 @@ function applyFiltersAndSort() {
   } else if (sortValue === "price-desc") {
     results.sort((a, b) => (b.price ?? -Infinity) - (a.price ?? -Infinity));
   } else {
+    // "Default Order": the source data has no listing/published date, so
+    // this is deliberately NOT labelled "Latest" — it's just a stable,
+    // deterministic order (descending reference number) so results don't
+    // reshuffle between visits/filters.
     results.sort((a, b) => Number(b.reference) - Number(a.reference));
   }
 
@@ -72,9 +76,45 @@ function render(results) {
   grid.hidden = results.length === 0;
 }
 
+function showLoadError() {
+  countEl.textContent = "Unable to load properties";
+  grid.hidden = true;
+  emptyEl.hidden = false;
+  emptyEl.innerHTML = `
+    <h3>We couldn't load the property list</h3>
+    <p>Please refresh the page. If the problem continues, <a href="${BASE_PATH}/contact.html" class="link-underline">contact us</a> and we'll help directly.</p>
+  `;
+  form.querySelectorAll("select, input, button").forEach((el) => (el.disabled = true));
+}
+
+async function loadProperties() {
+  let res;
+  try {
+    res = await fetch(`${BASE_PATH}/data/properties.json`);
+  } catch (networkErr) {
+    console.error("Failed to fetch properties.json (network error):", networkErr);
+    throw networkErr;
+  }
+  if (!res.ok) {
+    console.error(`properties.json request failed: HTTP ${res.status} ${res.statusText}`);
+    throw new Error(`HTTP ${res.status}`);
+  }
+  try {
+    return await res.json();
+  } catch (parseErr) {
+    console.error("properties.json returned invalid JSON:", parseErr);
+    throw parseErr;
+  }
+}
+
 async function init() {
-  const res = await fetch(`${BASE_PATH}/data/properties.json`);
-  allProperties = await res.json();
+  try {
+    allProperties = await loadProperties();
+  } catch (err) {
+    showLoadError();
+    return;
+  }
+
   populateLocationOptions(allProperties);
   populateTypeOptions(allProperties);
 
@@ -91,7 +131,7 @@ async function init() {
   sortSelect.addEventListener("change", applyFiltersAndSort);
   resetBtn.addEventListener("click", () => {
     form.reset();
-    sortSelect.value = "latest";
+    sortSelect.value = "default";
     applyFiltersAndSort();
   });
 }

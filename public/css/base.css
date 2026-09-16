@@ -108,6 +108,10 @@ hr { border: none; border-top: 1px solid var(--line); margin: var(--space-lg) 0;
 }
 @media (min-width: 640px) {
   .grid--2 { grid-template-columns: repeat(2, 1fr); }
+  /* A 4-up grid needs real room per card; at tablet widths give it 2
+     columns rather than jumping straight from 1 to 4 (which left oversized
+     single-column cards with awkward whitespace at ~700-1000px). */
+  .grid--4 { grid-template-columns: repeat(2, 1fr); }
 }
 @media (min-width: 860px) {
   .grid--3 { grid-template-columns: repeat(3, 1fr); }

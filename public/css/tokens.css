@@ -66,47 +66,13 @@
   --dur-slow: 480ms;
 }
 
-/* --- Color: dark --- */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --ink: #F3EEE4;
-    --ink-soft: #D8D0C0;
-    --muted: #A79C88;
-    --line: #3A342A;
-    --line-soft: #2C2820;
-    --paper: #15130F;
-    --stone: #1C1913;
-    --stone-deep: #262119;
-    --surface: #1E1B15;
-    --accent: #C97A62;
-    --accent-ink: #E3A992;
-    --accent-tint: #2C1D17;
-    --gold: #C9A34F;
-    --success: #7BAF87;
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
-    --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.55);
-  }
-}
-
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --ink: #F3EEE4;
-  --ink-soft: #D8D0C0;
-  --muted: #A79C88;
-  --line: #3A342A;
-  --line-soft: #2C2820;
-  --paper: #15130F;
-  --stone: #1C1913;
-  --stone-deep: #262119;
-  --surface: #1E1B15;
-  --accent: #C97A62;
-  --accent-ink: #E3A992;
-  --accent-tint: #2C1D17;
-  --gold: #C9A34F;
-  --success: #7BAF87;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.55);
-}
+/* Dark mode was audited with Playwright under prefers-color-scheme: dark
+   and removed deliberately, not by omission: --ink/--paper are used both
+   as text/background roles AND as the deliberate dark "contrast band"
+   background on .section--ink (see components.css). A dark-mode token
+   flip inverts that section to a near-white band with near-invisible
+   outline buttons on it, along with other untested/unreviewed states
+   across the site. Since there is no theme toggle and dark mode was never
+   actually designed for this proposal, the site stays deterministically
+   light rather than shipping an inconsistent automatic variant. Revisit
+   if a real dark theme is designed and reviewed for this brand.

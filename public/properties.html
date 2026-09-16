@@ -54,7 +54,7 @@
   <main id="main">
     <div class="page-head">
       <div class="container">
-        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/Law-Real-Estate/">Home</a><span>Properties</span></nav>
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/Law-Real-Estate/">Home</a><span class="breadcrumb__sep" aria-hidden="true">/</span><span aria-current="page">Properties</span></nav>
         <p class="eyebrow">Current Inventory</p>
         <h1 style="font-size: var(--step-4); margin-bottom:0.3em;">Properties</h1>
         <p class="muted" style="max-width:60ch;">Browse LAW's current mandates. Use the filters to narrow by status, location, type, price and bedrooms &mdash; then sort the results however suits you.</p>
@@ -67,9 +67,8 @@
           <div class="field">
             <label for="fStatus">Status</label>
             <select id="fStatus" name="status">
-              <option value="all">For Sale &amp; Rent</option>
+              <option value="all">All Properties</option>
               <option value="For Sale">For Sale</option>
-              <option value="For Rent">For Rent</option>
             </select>
           </div>
           <div class="field">
@@ -120,7 +119,7 @@
           <div class="sort-field">
             <label for="sortSelect">Sort by</label>
             <select id="sortSelect">
-              <option value="latest">Latest</option>
+              <option value="default">Default Order</option>
               <option value="price-asc">Price: Low to High</option>
               <option value="price-desc">Price: High to Low</option>
             </select>

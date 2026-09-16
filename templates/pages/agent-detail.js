@@ -1,29 +1,26 @@
 const { head, header, footer, breadcrumb, escapeHtml } = require("../partials");
-const { propertyCard, withBase } = require("../format");
+const { propertyCard, withBase, telHref } = require("../format");
 const { SITE_URL } = require("../config");
 
 function agentDetailPage(agent, listings) {
   const waLink = agent.whatsappNumber
-    ? `<a class="icon-btn icon-btn--whatsapp" href="https://wa.me/${agent.whatsappNumber}" target="_blank" rel="noopener">WhatsApp</a>`
+    ? `<a class="icon-btn icon-btn--whatsapp" href="https://wa.me/${encodeURIComponent(agent.whatsappNumber)}" target="_blank" rel="noopener">WhatsApp</a>`
     : "";
   const callLink = agent.mobile
-    ? `<a class="icon-btn" href="tel:${agent.mobile.replace(/[^\d+]/g, "")}">Call ${agent.mobile}</a>`
+    ? `<a class="icon-btn" href="${telHref(agent.mobile)}">Call ${escapeHtml(agent.mobile)}</a>`
     : "";
   const officeLink = agent.officePhone
-    ? `<a class="icon-btn" href="tel:${agent.officePhone.replace(/[^\d+]/g, "")}">Office ${agent.officePhone}</a>`
+    ? `<a class="icon-btn" href="${telHref(agent.officePhone)}">Office ${escapeHtml(agent.officePhone)}</a>`
     : "";
   const emailLink = agent.email
-    ? `<a class="icon-btn" href="mailto:${agent.email}">${agent.email}</a>`
+    ? `<a class="icon-btn" href="mailto:${encodeURIComponent(agent.email)}">${escapeHtml(agent.email)}</a>`
     : "";
 
   const bodyHtml = `${header("/team.html")}
   <main id="main">
     <div class="page-head">
       <div class="container">
-        ${breadcrumb([
-          { href: "/team.html", label: "Our Team" },
-          { href: "#", label: agent.name },
-        ])}
+        ${breadcrumb([{ href: "/team.html", label: "Our Team" }], agent.name)}
       </div>
     </div>
     <section class="section--tight">

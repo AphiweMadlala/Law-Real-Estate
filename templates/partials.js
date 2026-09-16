@@ -143,15 +143,18 @@ function footer() {
   <script type="module" src="${withBase("/js/nav.js")}"></script>`;
 }
 
-function breadcrumb(items) {
-  const parts = items
-    .map((it, i) => {
-      const isLast = i === items.length - 1;
-      const sep = i > 0 ? `<span class="breadcrumb__sep">/</span>` : "";
-      return `${sep}${isLast ? `<span>${escapeHtml(it.label)}</span>` : `<a href="${withBase(it.href)}">${escapeHtml(it.label)}</a>`}`;
-    })
-    .join("");
-  return `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="${withBase("/")}">Home</a>${parts}</nav>`;
+// `trail` is the list of clickable ancestor crumbs ({href, label}), and
+// `current` is the plain-text label of the page you're actually on. There
+// is deliberately no way to pass an href for the current page — it always
+// renders as a plain, aria-current="page" span, never a dead-end href="#"
+// link. Every crumb (Home included) gets a visible/accessible separator
+// before it.
+function breadcrumb(trail, current) {
+  const sep = `<span class="breadcrumb__sep" aria-hidden="true">/</span>`;
+  const links = [{ href: "/", label: "Home" }, ...(trail || [])]
+    .map((it) => `<a href="${withBase(it.href)}">${escapeHtml(it.label)}</a>`);
+  const currentPart = current ? [`<span aria-current="page">${escapeHtml(current)}</span>`] : [];
+  return `<nav class="breadcrumb" aria-label="Breadcrumb">${[...links, ...currentPart].join(sep)}</nav>`;
 }
 
 function page({ lang = "en-ZA", headHtml, bodyHtml, bodyClass = "" }) {

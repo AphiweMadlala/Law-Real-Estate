@@ -1,4 +1,6 @@
 // Fullscreen gallery lightbox with thumbnail filmstrip and keyboard navigation.
+import { trapFocus } from "./focus-trap.js";
+
 const galleryLinks = Array.from(document.querySelectorAll(".gallery a[data-index]"));
 if (galleryLinks.length) {
   const images = galleryLinks.map((a) => ({ src: a.href, alt: a.querySelector("img")?.alt || "" }));
@@ -31,19 +33,19 @@ if (galleryLinks.length) {
   const nextBtn = lightbox.querySelector("#lbNext");
 
   images.forEach((img, i) => {
-    const thumb = document.createElement("img");
-    thumb.src = img.src;
-    thumb.alt = `Thumbnail ${i + 1}`;
-    thumb.tabIndex = 0;
-    thumb.setAttribute("role", "button");
-    thumb.addEventListener("click", () => show(i));
-    thumb.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        show(i);
-      }
-    });
-    filmstrip.appendChild(thumb);
+    const thumbBtn = document.createElement("button");
+    thumbBtn.type = "button";
+    thumbBtn.className = "lightbox__thumb";
+    thumbBtn.setAttribute("aria-label", `View photo ${i + 1} of ${images.length}`);
+    thumbBtn.addEventListener("click", () => show(i));
+
+    const thumbImg = document.createElement("img");
+    thumbImg.src = img.src;
+    thumbImg.alt = "";
+    thumbImg.loading = "lazy";
+    thumbBtn.appendChild(thumbImg);
+
+    filmstrip.appendChild(thumbBtn);
   });
 
   let current = 0;
@@ -54,7 +56,12 @@ if (galleryLinks.length) {
     lbImage.src = images[current].src;
     lbImage.alt = images[current].alt;
     lbCurrent.textContent = current + 1;
-    Array.from(filmstrip.children).forEach((el, idx) => el.classList.toggle("is-active", idx === current));
+    Array.from(filmstrip.children).forEach((el, idx) => {
+      const isActive = idx === current;
+      el.classList.toggle("is-active", isActive);
+      if (isActive) el.setAttribute("aria-current", "true");
+      else el.removeAttribute("aria-current");
+    });
     filmstrip.children[current]?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
   }
 
@@ -85,9 +92,13 @@ if (galleryLinks.length) {
 
   document.addEventListener("keydown", (e) => {
     if (lightbox.hidden) return;
-    if (e.key === "Escape") close();
+    if (e.key === "Escape") {
+      close();
+      return;
+    }
     if (e.key === "ArrowLeft") show(current - 1);
     if (e.key === "ArrowRight") show(current + 1);
+    trapFocus(lightbox, e);
   });
 
   let touchStartX = null;

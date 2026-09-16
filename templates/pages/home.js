@@ -1,12 +1,23 @@
-const { head, header, footer } = require("../partials");
-const { agentCardCompact, showcaseCard, withBase } = require("../format");
+const { head, header, footer, escapeHtml } = require("../partials");
+const { agentCardCompact, showcaseCard, withBase, statusOptionsHtml } = require("../format");
 const { SITE_URL } = require("../config");
 
-function homePage({ company, notableSales, developments, agents }) {
+function homePage({ company, notableSales, developments, agents, properties }) {
   const topStats = company.stats;
-  const leadership = agents.filter((a) => (a.title || "").includes("Director")).concat(
-    agents.filter((a) => (a.title || "").includes("Professional Practitioner")).slice(0, 5)
-  ).slice(0, 3);
+  // Directors and Professional Practitioners aren't mutually exclusive
+  // titles (e.g. "Director, Professional Practitioner in Real Estate"), so
+  // dedupe by stable agent id before slicing — otherwise the same person
+  // can be concatenated in twice and shown twice on the homepage.
+  const seenLeadershipIds = new Set();
+  const leadership = agents
+    .filter((a) => (a.title || "").includes("Director"))
+    .concat(agents.filter((a) => (a.title || "").includes("Professional Practitioner")))
+    .filter((a) => {
+      if (seenLeadershipIds.has(a.id)) return false;
+      seenLeadershipIds.add(a.id);
+      return true;
+    })
+    .slice(0, 3);
 
   const bodyHtml = `${header("/")}
   <main id="main">
@@ -32,9 +43,7 @@ function homePage({ company, notableSales, developments, agents }) {
           <div class="field">
             <label for="heroStatus">Status</label>
             <select id="heroStatus" name="status">
-              <option value="all">For Sale &amp; Rent</option>
-              <option value="For Sale">For Sale</option>
-              <option value="For Rent">For Rent</option>
+              ${statusOptionsHtml(properties)}
             </select>
           </div>
           <div class="field">
@@ -94,8 +103,8 @@ function homePage({ company, notableSales, developments, agents }) {
           ${topStats
             .map(
               (s) => `<div class="stat-block">
-            <div class="stat-block__value">${s.value}</div>
-            <div class="stat-block__label">${s.label}</div>
+            <div class="stat-block__value">${escapeHtml(s.value)}</div>
+            <div class="stat-block__label">${escapeHtml(s.label)}</div>
           </div>`
             )
             .join("")}

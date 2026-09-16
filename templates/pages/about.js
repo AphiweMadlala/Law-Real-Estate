@@ -1,4 +1,4 @@
-const { head, header, footer, breadcrumb, withBase } = require("../partials");
+const { head, header, footer, breadcrumb, withBase, escapeHtml } = require("../partials");
 const { SITE_URL } = require("../config");
 
 function aboutPage(company) {
@@ -6,7 +6,7 @@ function aboutPage(company) {
   <main id="main">
     <div class="page-head">
       <div class="container">
-        ${breadcrumb([{ href: "/about.html", label: "About" }])}
+        ${breadcrumb([], "About")}
         <p class="eyebrow">About LAW</p>
         <h1 style="font-size: var(--step-4); margin-bottom:0.3em;">The Authority In Residential Resale</h1>
       </div>
@@ -14,11 +14,11 @@ function aboutPage(company) {
     <section class="section--tight">
       <div class="container">
         <div class="prose" style="max-width: 68ch;">
-          <p style="font-size: var(--step-1); color: var(--ink);">${company.tagline}</p>
-          <p>${company.positioning}</p>
+          <p style="font-size: var(--step-1); color: var(--ink);">${escapeHtml(company.tagline)}</p>
+          <p>${escapeHtml(company.positioning)}</p>
           <h3 style="font-size:var(--step-1); margin-top:2em;">Where LAW Operates</h3>
           <ul>
-            ${company.focus.map((f) => `<li>${f}</li>`).join("")}
+            ${company.focus.map((f) => `<li>${escapeHtml(f)}</li>`).join("")}
           </ul>
           <h3 style="font-size:var(--step-1); margin-top:2em;">By The Numbers</h3>
           <p class="muted" style="font-size:0.85rem;">Figures as published on LAW Real Estate's own website; not independently audited.</p>
@@ -26,7 +26,7 @@ function aboutPage(company) {
         <div class="stat-grid" style="margin-top: var(--space-lg);">
           ${company.stats
             .map(
-              (s) => `<div class="stat-block"><div class="stat-block__value">${s.value}</div><div class="stat-block__label">${s.label}</div></div>`
+              (s) => `<div class="stat-block"><div class="stat-block__value">${escapeHtml(s.value)}</div><div class="stat-block__label">${escapeHtml(s.label)}</div></div>`
             )
             .join("")}
         </div>

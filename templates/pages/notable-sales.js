@@ -22,7 +22,7 @@ function notableSalesPage(notableSales) {
   <main id="main">
     <div class="page-head">
       <div class="container">
-        ${breadcrumb([{ href: "/notable-sales.html", label: "Notable Sales" }])}
+        ${breadcrumb([], "Notable Sales")}
         <p class="eyebrow">Proven Results</p>
         <h1 style="font-size: var(--step-4); margin-bottom:0.3em;">Recent Notable Sales</h1>
         <p class="muted" style="max-width:64ch;">A selection of LAW's highest-value concluded transactions, drawn from the agency's own published sales record &mdash; from R7.5 million to R17 million.</p>

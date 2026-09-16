@@ -1,4 +1,4 @@
-const { head, header, footer, breadcrumb, withBase } = require("../partials");
+const { head, header, footer, breadcrumb, withBase, escapeHtml } = require("../partials");
 const { SITE_URL } = require("../config");
 
 function sellPage(company) {
@@ -6,10 +6,10 @@ function sellPage(company) {
   <main id="main">
     <div class="page-head">
       <div class="container">
-        ${breadcrumb([{ href: "/sell.html", label: "Sell With LAW" }])}
+        ${breadcrumb([], "Sell With LAW")}
         <p class="eyebrow">For Sellers</p>
         <h1 style="font-size: var(--step-4); margin-bottom:0.3em;">Sell With LAW</h1>
-        <p class="muted" style="max-width:64ch;">"${company.tagline}" &mdash; ${company.positioning}</p>
+        <p class="muted" style="max-width:64ch;">"${escapeHtml(company.tagline)}" &mdash; ${escapeHtml(company.positioning)}</p>
       </div>
     </div>
 
@@ -18,7 +18,7 @@ function sellPage(company) {
         <div class="stat-grid">
           ${company.stats
             .map(
-              (s) => `<div class="stat-block"><div class="stat-block__value">${s.value}</div><div class="stat-block__label">${s.label}</div></div>`
+              (s) => `<div class="stat-block"><div class="stat-block__value">${escapeHtml(s.value)}</div><div class="stat-block__label">${escapeHtml(s.label)}</div></div>`
             )
             .join("")}
           <div class="stat-block"><div class="stat-block__value">4</div><div class="stat-block__label">Johannesburg offices</div></div>

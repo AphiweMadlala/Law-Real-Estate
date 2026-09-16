@@ -1,12 +1,13 @@
 const { head, header, footer, breadcrumb, withBase } = require("../partials");
 const { SITE_URL } = require("../config");
+const { statusOptionsHtml } = require("../format");
 
-function propertiesPage() {
+function propertiesPage(properties) {
   const bodyHtml = `${header("/properties.html")}
   <main id="main">
     <div class="page-head">
       <div class="container">
-        ${breadcrumb([{ href: "/properties.html", label: "Properties" }])}
+        ${breadcrumb([], "Properties")}
         <p class="eyebrow">Current Inventory</p>
         <h1 style="font-size: var(--step-4); margin-bottom:0.3em;">Properties</h1>
         <p class="muted" style="max-width:60ch;">Browse LAW's current mandates. Use the filters to narrow by status, location, type, price and bedrooms &mdash; then sort the results however suits you.</p>
@@ -19,9 +20,7 @@ function propertiesPage() {
           <div class="field">
             <label for="fStatus">Status</label>
             <select id="fStatus" name="status">
-              <option value="all">For Sale &amp; Rent</option>
-              <option value="For Sale">For Sale</option>
-              <option value="For Rent">For Rent</option>
+              ${statusOptionsHtml(properties)}
             </select>
           </div>
           <div class="field">
@@ -72,7 +71,7 @@ function propertiesPage() {
           <div class="sort-field">
             <label for="sortSelect">Sort by</label>
             <select id="sortSelect">
-              <option value="latest">Latest</option>
+              <option value="default">Default Order</option>
               <option value="price-asc">Price: Low to High</option>
               <option value="price-desc">Price: High to Low</option>
             </select>

@@ -22,7 +22,7 @@ function developmentsPage(developments) {
   <main id="main">
     <div class="page-head">
       <div class="container">
-        ${breadcrumb([{ href: "/developments.html", label: "Developments" }])}
+        ${breadcrumb([], "Developments")}
         <p class="eyebrow">Estate &amp; Development Track Record</p>
         <h1 style="font-size: var(--step-4); margin-bottom:0.3em;">Developments</h1>
         <p class="muted" style="max-width:64ch;">LAW runs a boutique new-developments division. The units below are units LAW has facilitated within named estates and complexes &mdash; every one shown here is <strong>already sold</strong>, presented as a track record rather than current stock. For live development opportunities, <a class="link-underline" href="${withBase("/sell.html")}">get in touch</a> directly.</p>
