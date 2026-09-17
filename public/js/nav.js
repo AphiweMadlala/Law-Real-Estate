@@ -8,7 +8,7 @@ function openNav() {
   mobileNav.hidden = false;
   toggle.setAttribute("aria-expanded", "true");
   document.body.style.overflow = "hidden";
-  const firstLink = mobileNav.querySelector("a");
+  const firstLink = mobileNav.querySelector(".mobile-nav__link");
   if (firstLink) firstLink.focus();
 }
 

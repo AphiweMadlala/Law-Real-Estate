@@ -64,6 +64,15 @@ function header(activeHref) {
     const current = l.href === activeHref ? ` aria-current="page"` : "";
     return `<li><a href="${withBase(l.href)}"${current}>${l.label}</a></li>`;
   }).join("");
+  // Mobile drawer list intentionally omits "Home": the drawer's own wordmark
+  // (below) is a real link back to "/", so a separate Home row would just
+  // duplicate it.
+  const mobileItems = NAV_LINKS.filter((l) => l.href !== "/")
+    .map((l) => {
+      const current = l.href === activeHref ? ` aria-current="page"` : "";
+      return `<li><a class="mobile-nav__link" href="${withBase(l.href)}"${current}>${l.label}</a></li>`;
+    })
+    .join("");
   return `<a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="container site-header__bar">
@@ -85,15 +94,14 @@ function header(activeHref) {
   </header>
   <div class="mobile-nav" id="mobileNav" hidden>
     <div class="mobile-nav__head">
-      <span class="wordmark__name"><strong>LAW</strong> Real Estate</span>
+      <a href="${withBase("/")}" class="wordmark__name" aria-label="LAW Real Estate, home"><strong>LAW</strong> Real Estate</a>
       <button class="mobile-nav__close" id="mobileNavClose" aria-label="Close menu">&times;</button>
     </div>
     <nav aria-label="Mobile">
-      <ul>${NAV_LINKS.map((l) => `<li><a href="${withBase(l.href)}">${l.label}</a></li>`).join("")}</ul>
+      <ul>${mobileItems}</ul>
     </nav>
     <div class="mobile-nav__footer">
-      <a href="tel:+27116823865" class="btn btn-primary btn-block">Call +27 (0)11 682 3865</a>
-      <a href="${withBase("/sell.html")}" class="btn btn-outline btn-block">Sell With LAW</a>
+      <a href="tel:+27116823865" class="btn btn-primary btn-block mobile-nav__cta">Call Us</a>
     </div>
   </div>`;
 }
