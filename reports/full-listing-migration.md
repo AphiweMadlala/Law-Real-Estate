@@ -4,6 +4,8 @@
 **Source:** https://www.lawrealestate.co.za/ (live site, captured this session)
 **Scope:** Replace the 31-property proposal sample with LAW Real Estate's complete currently-active property inventory (For Sale + Monthly Rental).
 
+> **Update (final reconciliation pass, same day):** a second pass resolved the 7-listing gap left by the first migration down to 2, added the one previously-unmatched listing agent to the roster, and selectively deepened photo galleries for the highest-value listings. See **Addendum: Final Reconciliation Pass** at the end of this report for the full detail — the numbers below the addendum marker reflect the *original* migration and are kept for the historical record; the addendum has the final, current state.
+
 ## 1. Source counts (measured live, via Playwright against the real site)
 
 | Listing type | Source-reported total | Notes |
@@ -109,3 +111,58 @@ All 31 properties in the pre-migration dataset were checked against the fresh cr
 3. **No WebP conversion** — no image encoder available in this sandboxed environment and package installation is network-blocked.
 4. **1 agent (Kat Dlamini) not in the team roster** — captured with full direct contact info on her listing, but not added to `data/agents.json` (team-roster maintenance is out of scope for a listing-data migration).
 5. **No reliable `dateListed`** exists on the source for any listing — left `null` throughout, and the frontend's sort control correctly stays labelled "Default Order" rather than "Latest" (pre-existing behavior, unaffected by this migration).
+
+---
+
+## Addendum: Final Reconciliation Pass
+
+A follow-up pass targeted the four open items above (1, 2, 4 — item 3, WebP, remains blocked by the same sandbox constraint; item 5 is inherent to the source and unaffected). Website design/layout/build architecture were **not** touched in this pass.
+
+### 1. Resolving the 7-sale-listing discrepancy
+
+The original migration's index crawl relied on paginating a single sort order (10 listings/page), which is vulnerable to live sort-order drift on a frequently-updated CMS — an item can shift across a page boundary between two requests and get missed by both the page before and after it, no matter how carefully pagination is walked. This pass instead did a **lightweight, position-independent re-scan**: collected only `{reference, url, title}` (from each index card's own `alt` text, not detail pages) across **two independent sort orders** — the default order and an explicit `order=priceDescending` — then deduplicated by reference number and took the **union** of both passes. A listing sitting at a boundary in one order is very unlikely to sit at a boundary in a completely different order, so the union closes most of the gap a single-order crawl leaves.
+
+Results:
+- Pass A (default order): 372 unique references.
+- Pass B (priceDescending order): 375 unique references.
+- **Union: 378 unique references** — 3 references pass A alone missed, 6 references pass B alone missed, confirming the drift hypothesis (different listings fell into boundary gaps in each order, and the other order caught them).
+- Diffed against the then-local dataset (373 sale listings): **5 references present on the live source but missing locally** (1188, 6130, 6609, 6612, 6868), **0 references present locally but absent from the live source** (all 373 were re-confirmed live).
+- All 5 missing listings were fetched and migrated through the existing pipeline (same parser, same image download, same agent resolution) and merged into `data/properties.json` without disturbing the 374 already-migrated listings or their prior fixes (gallery expansion, Kat Dlamini's agent link).
+
+**Final tally: 378 of the source's reported 380 listings are migrated. The 2 unresolved references cannot be identified** — the dual-order re-scan found no reference the local dataset doesn't already have, so the remaining gap is not a *known, locatable* listing being skipped; it is residual drift the two orders tried in this pass didn't happen to surface (e.g. a listing that sits at a page boundary in both the default and price-descending orders simultaneously, or that changed status between the initial "380" count and this re-scan). No individually-identifiable missing reference exists to report. Further narrowing would require either a third/fourth independent sort order (e.g. `dateNewestFirst`, alphabetical by suburb) or a much faster single-pass crawl that completes within one page-cache TTL — both reasonable next steps if closing this to zero is required, but outside this pass's scope.
+
+### 2. Kat Dlamini
+
+Fetched her LAW profile page directly (`estate-agent/kat-dlamini/54852`) and verified: name, role (`Intern Agent`, from the page's own `agent-title` element), mobile, email, WhatsApp number, and a real profile photo (`motorAgentImages/600/1833363.jpg`, downloaded to `/images/agents/54852.jpg`, same 600×600 convention as every other agent photo). No field was fabricated or inferred — everything above was read directly from her own page, matching exactly what the pre-existing 42-agent roster entries contain.
+
+Added as agent `54852` to `data/agents.json` (now 43 agents) and re-linked the one listing that carried her as an unmatched inline contact (ref 6893) to point at the new canonical record (`matched: true`, `id: "54852"`, correct title/photo). She appears as that listing's *second* agent — the property detail template only renders the first agent's card in the sidebar, which is pre-existing site behavior unrelated to this migration; both agents remain in the listing's data, per the "preserve all agents" requirement.
+
+### 3. Selective gallery-depth expansion
+
+Criteria for "premium/high-value" (deliberately conservative, not blanket): **For Sale, price ≥ R10,000,000** (roughly the top decile of this dataset's price distribution — the p90 price is ~R10.5M) **and** more than 12 photos available at source (expanding a listing that only has 12 source photos to begin with would do nothing). **36 listings** qualified. Their local cap was raised from 12 to **up to 24** — capped at whatever's actually available where that's under 24 (a few landed at 16, 18, or 21 rather than 24 for exactly that reason). This reused the already-cached raw detail HTML to re-derive each listing's full image-URL list (no re-fetch of the listing page itself) and downloaded only the *additional* images needed — images 13 through the new target — never re-downloading or re-ordering the first 12. **415 new images** downloaded; source order preserved throughout. Every other listing (all 343 non-qualifying "For Sale" listings, plus the 1 rental) keeps the ordinary 12-image cap, unchanged.
+
+### 4. Revalidation results
+
+`scripts/validate.js` (via `scripts/build.js`): **0 errors**, 4 non-fatal warnings — all 4 are listings with genuinely zero photos at source (refs 2677, 2228, 1574, and the newly-added 1188), independently verified, not a download defect.
+
+Playwright, re-run in full against the reconciled build:
+- **Properties page**: 379 cards render, 1085ms load, filters/sort/no-results all still correct — Sale filter shows exactly 378, Rent filter shows exactly 1, all 13 property-type filter counts sum to 379, sort-by-price-ascending verified correct across all 379 results.
+- **The 5 newly-migrated listings**: all return HTTP 200 with correct title and reference tag.
+- **The premium-expansion sample** (ref 5925, the highest-priced listing): gallery now exposes 24 photo links, all confirmed loadable.
+- **Kat Dlamini's new team page** (`/team/kat-dlamini/`): loads correctly, HTTP 200, her name renders.
+- **Sitewide sweep** (8 top-level pages × mobile + desktop, 16 checks): zero issues — no console errors, no failed/4xx+ requests, no horizontal overflow.
+
+### Final reconciled numbers
+
+| Metric | Value |
+|---|---|
+| Live unique sale references found (dual-order union) | 378 |
+| Local active sale count after this pass | **378** |
+| Unresolved/unlocatable references | **2** (no specific reference identifiable — see §1 above) |
+| Final rental count | **1** |
+| Total images after selective expansion | **4,775** (4,318 base + 415 premium-expansion + 42 from the 5 newly-migrated listings) |
+| Final agent-match rate | **100%** (562/562 listing-agent assignments matched, up from 551/552) |
+| Validation | **0 errors**, 4 expected warnings (zero-image source listings) |
+| Playwright QA | **All checks passed** — Properties page, 5 new listings, premium gallery sample, Kat's team page, and full 16-check sitewide sweep |
+
+**This migration is not claimed as fully reconciled**: 378 of 380 source-reported listings are confirmed present locally, with 2 remaining unaccounted for and no specific reference identifiable to close that gap with the methods available in this environment (no Firecrawl/Apify access; direct HTTP + a two-sort-order re-scan was the strongest verification method available). Everything else — the local-only-reference check (0 stale/sold listings), the agent roster, and the gallery-depth expansion — is fully resolved and verified.
