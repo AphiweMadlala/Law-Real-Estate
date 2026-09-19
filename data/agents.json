@@ -544,5 +544,18 @@
     "whatsappNumber": "27833651733",
     "profileUrl": "https://www.lawrealestate.co.za/estate-agent/thendo-lifuwa/54850",
     "office": null
+  },
+  {
+    "id": "54852",
+    "slug": "kat-dlamini",
+    "name": "Kat Dlamini",
+    "title": "Intern Agent",
+    "photo": "/images/agents/54852.jpg",
+    "mobile": "+27 (0)64 904 3419",
+    "officePhone": "+27 (0)11 682 3865",
+    "email": "kat@lawrealestate.co.za",
+    "whatsappNumber": "27649043419",
+    "profileUrl": "https://www.lawrealestate.co.za/estate-agent/kat-dlamini/54852",
+    "office": null
   }
 ]
