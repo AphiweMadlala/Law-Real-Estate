@@ -32,19 +32,32 @@ function relatedProperties(current, all) {
   return { items, hasLocalMatch };
 }
 
-function galleryHtml(images, title) {
+// Some genuine source listings have no photography at all (verified at
+// migration time, not a download failure — see reports/full-listing-
+// migration.md). Rather than rendering a collapsed, empty gallery grid,
+// show one deliberate LAW-branded panel so the page never looks broken.
+function galleryFallbackHtml() {
+  return `<div class="gallery gallery--empty">
+    <div class="gallery__fallback" role="img" aria-label="Photography unavailable for this property">
+      <img src="${withBase("/images/brand/placeholder.svg")}" alt="" width="480" height="360" loading="eager" />
+    </div>
+  </div>`;
+}
+
+function galleryHtml(images, title, reference) {
+  if (!images || images.length === 0) return galleryFallbackHtml();
   const shown = images.slice(0, 5);
   return `<div class="gallery">
     ${shown
       .map((src, i) => {
         const isLast = i === shown.length - 1 && images.length > shown.length;
-        return `<a href="${withBase(src)}" data-index="${i}" aria-label="Open photo ${i + 1} of ${images.length} in fullscreen gallery">
-          <img src="${withBase(src)}" alt="${escapeHtml(title)} — photo ${i + 1} of ${images.length}" loading="${i === 0 ? "eager" : "lazy"}" />
+        return `<a href="${withBase(src)}" data-index="${i}" aria-label="Open photo ${i + 1} of ${images.length} in fullscreen gallery" data-event="property_gallery_open" data-property-ref="${escapeHtml(reference)}">
+          <img src="${withBase(src)}" alt="${escapeHtml(title)} — photo ${i + 1} of ${images.length}" loading="${i === 0 ? "eager" : "lazy"}" ${i === 0 ? 'width="960" height="720"' : ""} />
           ${isLast ? `<span class="gallery__more">+${images.length - shown.length} more</span>` : ""}
         </a>`;
       })
       .join("")}
-    ${images.slice(5).map((src, i) => `<a href="${withBase(src)}" data-index="${i + 5}" style="display:none;" aria-label="Open photo ${i + 6} of ${images.length} in fullscreen gallery"><img src="${withBase(src)}" alt="${escapeHtml(title)} — photo ${i + 6}" loading="lazy" /></a>`).join("")}
+    ${images.slice(5).map((src, i) => `<a href="${withBase(src)}" data-index="${i + 5}" style="display:none;" aria-label="Open photo ${i + 6} of ${images.length} in fullscreen gallery" data-event="property_gallery_open" data-property-ref="${escapeHtml(reference)}"><img src="${withBase(src)}" alt="${escapeHtml(title)} — photo ${i + 6}" loading="lazy" /></a>`).join("")}
   </div>`;
 }
 
@@ -115,7 +128,7 @@ function propertyDetailPage(property, allProperties) {
       ${breadcrumb([{ href: "/properties.html", label: "Properties" }], `${property.suburb}, ${property.city}`)}
     </div>
     <div class="container">
-      ${galleryHtml(property.images, property.title)}
+      ${galleryHtml(property.images, property.title, property.reference)}
     </div>
 
     <section class="section--tight">

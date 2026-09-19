@@ -79,6 +79,7 @@ function main() {
   const sellPage = require("../templates/pages/sell");
   const aboutPage = require("../templates/pages/about");
   const contactPage = require("../templates/pages/contact");
+  const notFoundPage = require("../templates/pages/not-found");
 
   writeFile("index.html", homePage({ company, notableSales, developments, agents, properties }));
   writeFile("properties.html", propertiesPage(properties));
@@ -88,6 +89,10 @@ function main() {
   writeFile("sell.html", sellPage(company));
   writeFile("about.html", aboutPage(company));
   writeFile("contact.html", contactPage(offices, company));
+  // GitHub Pages serves this automatically for any unmatched URL on the
+  // site (a project Pages site looks for /404.html at the published root).
+  // Deliberately not in the sitemap below — it's an error page, not content.
+  writeFile("404.html", notFoundPage());
 
   // 3. Generated property detail pages
   const propertyDetailPage = require("../templates/pages/property-detail");
@@ -125,6 +130,13 @@ ${urls.map((u) => `  <url><loc>${SITE_URL}${u}</loc></url>`).join("\n")}
 </urlset>
 `;
   writeFile("sitemap.xml", sitemap);
+  // Deliberately NOT a Disallow while PROPOSAL_MODE is on: blocking crawl
+  // access here would stop crawlers from ever reaching a page to read its
+  // <meta name="robots" content="noindex, nofollow"> (see templates/config.js
+  // / templates/partials.js head()), which is the mechanism that actually
+  // keeps this proposal out of search results. Allow + per-page noindex is
+  // the correct combination; Disallow + noindex is not (a disallowed page's
+  // noindex is never seen).
   writeFile("robots.txt", `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 
   console.log(`Built ${urls.length} pages.`);

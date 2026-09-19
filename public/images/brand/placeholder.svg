@@ -1,4 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360">
-  <rect width="480" height="360" fill="#EDE7DB"/>
-  <text x="240" y="185" font-family="Georgia, serif" font-size="20" fill="#A79C88" text-anchor="middle">LAW Real Estate</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="Photography unavailable for this LAW Real Estate listing">
+  <rect width="480" height="360" fill="#F2ECE0"/>
+  <text x="240" y="163" font-family="Georgia, 'Iowan Old Style', 'Palatino Linotype', serif" font-size="34" font-weight="700" fill="#7A2A1E" text-anchor="middle" letter-spacing="1">LAW</text>
+  <text x="240" y="191" font-family="Georgia, 'Iowan Old Style', 'Palatino Linotype', serif" font-size="16" fill="#1B1712" text-anchor="middle" letter-spacing="3">REAL ESTATE</text>
+  <line x1="211" y1="208" x2="269" y2="208" stroke="#7A2A1E" stroke-width="1"/>
+  <text x="240" y="230" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#6E6558" text-anchor="middle" letter-spacing="1.5">PHOTOGRAPHY UNAVAILABLE</text>
 </svg>

@@ -40,8 +40,16 @@ async function renderHomeSections() {
     return;
   }
 
+  // Automatically-selected homepage imagery (Featured, Signature) must
+  // never surface a listing with no photography — that's fine inside the
+  // full Properties grid (the branded fallback handles it there), but a
+  // curated "best of" section picking a blank card looks like a bug, not a
+  // deliberate choice. Listings with no images are simply excluded from
+  // these two automatic pools rather than shown with a fallback image.
+  const withImages = properties.filter((p) => p.images && p.images.length);
+
   if (featuredGrid) {
-    const featured = properties
+    const featured = withImages
       .filter((p) => p.price && p.price < 8000000)
       .sort((a, b) => Number(b.reference) - Number(a.reference))
       .slice(0, 3);
@@ -49,7 +57,7 @@ async function renderHomeSections() {
   }
 
   if (signatureGrid) {
-    const bySignature = [...properties].sort((a, b) => (b.price || 0) - (a.price || 0));
+    const bySignature = [...withImages].sort((a, b) => (b.price || 0) - (a.price || 0));
     signatureGrid.innerHTML = bySignature.slice(0, 3).map((p, i) => propertyCard(p, { eager: i < 3 })).join("");
   }
 

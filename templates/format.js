@@ -108,18 +108,22 @@ function slugify(str) {
 }
 
 function propertyCard(p, { eager = false } = {}) {
-  const img = withBase(p.images && p.images[0] ? p.images[0] : "/images/brand/placeholder.svg");
+  const hasImage = Boolean(p.images && p.images[0]);
+  const img = withBase(hasImage ? p.images[0] : "/images/brand/placeholder.svg");
   const typeLabel = p.propertyTypeDisplay || p.propertyType || "";
   const priceText = formatPrice(p.price, p.currency, p.priceOnApplication);
   const specs = [];
   if (p.bedrooms) specs.push(`<span>${escapeHtml(p.bedrooms)} Bed</span>`);
   if (p.bathrooms) specs.push(`<span>${escapeHtml(p.bathrooms)} Bath</span>`);
   if (p.garages) specs.push(`<span>${escapeHtml(p.garages)} Garage</span>`);
+  const imgAlt = hasImage
+    ? `${escapeHtml(typeLabel || "Property")} in ${escapeHtml(p.suburb)}, ${escapeHtml(p.city)}`
+    : "Photography unavailable for this listing";
   return `<article class="property-card">
-    <div class="property-card__media">
+    <div class="property-card__media${hasImage ? "" : " property-card__media--empty"}">
       <span class="property-card__status">${escapeHtml(p.status)}</span>
       <span class="property-card__type">${escapeHtml(typeLabel)}</span>
-      <img src="${img}" alt="${escapeHtml(typeLabel || "Property")} in ${escapeHtml(p.suburb)}, ${escapeHtml(p.city)}" loading="${eager ? "eager" : "lazy"}" width="480" height="360" />
+      <img src="${img}" alt="${imgAlt}" loading="${eager ? "eager" : "lazy"}" width="480" height="360" />
     </div>
     <div class="property-card__body">
       <p class="property-card__price">${escapeHtml(priceText)}</p>

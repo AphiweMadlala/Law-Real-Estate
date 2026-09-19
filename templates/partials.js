@@ -1,7 +1,7 @@
 // Shared HTML partials used by every generated page.
 // Plain Node (CommonJS), no external dependencies.
 
-const { BASE_PATH } = require("./config");
+const { BASE_PATH, PROPOSAL_MODE } = require("./config");
 
 // Prefix a root-relative path ("/", "/properties.html", "/images/x.jpg") with
 // BASE_PATH so it resolves correctly when the site is served from a subpath
@@ -45,6 +45,7 @@ function head({ title, description, canonical, ogImage, structuredData }) {
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
+  ${PROPOSAL_MODE ? `<meta name="robots" content="noindex, nofollow" />` : ""}
   <link rel="canonical" href="${canonical}" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="${escapeHtml(title)}" />

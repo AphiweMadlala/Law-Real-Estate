@@ -10,4 +10,17 @@
 const BASE_PATH = "/Law-Real-Estate";
 const SITE_URL = "https://aphiwemadlala.github.io/Law-Real-Estate";
 
-module.exports = { BASE_PATH, SITE_URL };
+// This deployment is a design proposal, not LAW's live website — it must
+// never compete with lawrealestate.co.za in search results. When true,
+// every generated page gets <meta name="robots" content="noindex, nofollow">
+// (added centrally in templates/partials.js's head()), which is the part
+// crawlers actually have to respect on a per-page basis; robots.txt alone
+// is advisory and some crawlers ignore it for pages they already know about.
+//
+// TO LAUNCH THIS AS A REAL PRODUCTION SITE: set this to `false`. That is the
+// ONLY change needed to stop emitting the noindex tag — nothing else in the
+// build depends on this flag. Do so only once this is genuinely LAW's
+// production deployment, not before.
+const PROPOSAL_MODE = true;
+
+module.exports = { BASE_PATH, SITE_URL, PROPOSAL_MODE };

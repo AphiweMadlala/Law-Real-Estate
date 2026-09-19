@@ -180,6 +180,11 @@
 .property-card__media { position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--stone); }
 .property-card__media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-slow) var(--ease); }
 .property-card:hover .property-card__media img { transform: scale(1.045); }
+/* Branded fallback graphic: centred and uncropped rather than cover-cropped
+   like a real photo, and never scales up on hover (nothing to zoom into). */
+.property-card__media--empty { display: flex; align-items: center; justify-content: center; }
+.property-card__media--empty img { width: auto; height: auto; max-width: 62%; max-height: 62%; object-fit: contain; }
+.property-card:hover .property-card__media--empty img { transform: none; }
 .property-card__status {
   position: absolute; top: 0.8rem; left: 0.8rem;
   background: var(--ink); color: var(--paper);
@@ -260,6 +265,19 @@
   position: absolute; inset: 0; background: rgba(20,16,11,0.55); color: #fff;
   display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1.1rem;
 }
+
+/* Deliberate branded panel for listings with no source photography — never
+   a collapsed empty grid or a broken-image icon. */
+.gallery--empty {
+  grid-template-columns: 1fr; grid-auto-rows: auto;
+  border: 1px solid var(--line-soft);
+}
+.gallery__fallback {
+  aspect-ratio: 16/9; max-height: 420px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--stone);
+}
+.gallery__fallback img { width: auto; height: auto; max-width: min(70%, 320px); }
 
 .specs-strip {
   display: flex; flex-wrap: wrap; gap: var(--space-lg);
