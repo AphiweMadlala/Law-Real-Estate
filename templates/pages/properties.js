@@ -85,7 +85,7 @@ function propertiesPage(properties) {
         </div>
 
         <hr class="divider" style="margin-top: var(--space-2xl);" />
-        <p class="muted text-center" style="margin-top: var(--space-md);">Know the reference number of a specific listing? <a href="${withBase("/contact.html")}" class="link-underline">Contact us</a> and quote it &mdash; e.g. Ref&nbsp;#6751.</p>
+        <p class="muted text-center" style="margin-top: var(--space-md);">Know the reference number of a specific listing? <a href="${withBase("/contact.html")}" class="link-underline">Contact us</a> and quote it &mdash; e.g. Ref&nbsp;#6893.</p>
       </div>
     </section>
   </main>
