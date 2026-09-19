@@ -223,26 +223,124 @@
   display: grid; gap: var(--space-sm);
   margin-bottom: var(--space-lg);
 }
-/* 8 grid items total: 7 filter fields + the Reset control. Below 900px they
-   stack (default single-column grid above). 900–1199px: a clean 4-column
-   grid, two balanced rows. >=1200px: all 7 fields get equal width, with
-   Reset sized to its own content at the end — thresholds are based on
-   measured control widths, not arbitrary guesses. */
-@media (min-width: 900px) {
-  .filters-bar { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }
-}
-@media (min-width: 1200px) {
-  .filters-bar { grid-template-columns: repeat(7, minmax(0, 1fr)) auto; }
-}
 .filters-bar .field { min-width: 0; }
 .filters-bar #resetFilters { min-height: 2.85rem; box-sizing: border-box; }
+.filters-bar__actions { display: flex; gap: var(--space-sm); }
+/* Drawer-only chrome (heading/close button, the "Apply Filters" button):
+   invisible furniture at desktop widths, where filtering is already live
+   and there's no drawer to close. */
+.filters-bar__head { display: none; }
+.filters-bar__apply { display: none; }
+
+/* 9 grid items total: 8 filter fields + the actions group. Below 900px
+   the form isn't inline at all — see the mobile-drawer block further
+   down. 900–1299px: a clean 4-column grid, with the free-text Search
+   field given a full extra column of width since it tends to hold longer
+   values. >=1300px (raised from the pre-existing 1200px threshold to make
+   room for the added Search field without cramming 9 columns into the
+   same space): a single row of 9 columns (Search spans 2, the other 7
+   fields span 1 each) plus a dedicated actions column, so Search keeps
+   enough width for its placeholder instead of shrinking to match the
+   narrower Beds/Baths fields. */
+@media (min-width: 900px) {
+  .filters-bar { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }
+  .field--search { grid-column: span 2; }
+  .filters-bar__actions { grid-column: 1 / -1; justify-content: flex-end; }
+}
+@media (min-width: 1300px) {
+  .filters-bar { grid-template-columns: repeat(9, minmax(0, 1fr)) auto; }
+  .field--search { grid-column: span 2; }
+  .filters-bar__actions { grid-column: auto; align-self: end; }
+}
+
 .results-bar {
   display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm);
   margin-bottom: var(--space-md); flex-wrap: wrap;
 }
+.results-bar__left { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
 .results-count { font-size: 0.9rem; color: var(--muted); }
 .sort-field { display: flex; align-items: center; gap: 0.6em; }
 .sort-field label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+/* Mobile-only "Filters (N)" trigger — hidden at desktop widths where the
+   filters bar already renders inline (see .filter-toggle desktop rule
+   further down), so the desktop layout is unchanged from before. */
+.filter-toggle { display: inline-flex; align-items: center; gap: 0.5em; }
+.filter-toggle__badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4em; height: 1.4em; padding: 0 0.3em; box-sizing: border-box;
+  background: var(--accent); color: #fff; border-radius: 999px;
+  font-size: 0.68rem; font-weight: 700; line-height: 1;
+}
+
+@media (max-width: 899px) {
+  .filters-bar { display: none; }
+  .filters-bar.is-open {
+    display: flex; flex-direction: column; gap: var(--space-sm);
+    position: fixed; inset: 0; z-index: 250;
+    background: var(--paper);
+    border: none; border-radius: 0; margin-bottom: 0;
+    padding: var(--space-md);
+    padding-top: max(var(--space-md), env(safe-area-inset-top, 0px));
+    padding-bottom: max(var(--space-md), env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+  }
+  .filters-bar__head { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+  .filters-bar__heading { font-size: 1.3rem; margin: 0; }
+  .filters-bar__close {
+    width: 44px; height: 44px; flex-shrink: 0;
+    border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface);
+    font-size: 1.3rem; cursor: pointer;
+  }
+  .filters-bar__actions {
+    flex-direction: column-reverse; gap: var(--space-sm);
+    margin-top: auto; padding-top: var(--space-sm); flex-shrink: 0;
+    position: sticky; bottom: 0; background: var(--paper);
+  }
+  .filters-bar__actions #resetFilters, .filters-bar__apply { width: 100%; min-height: 48px; }
+  .filters-bar__apply { display: inline-flex; }
+}
+@media (min-width: 900px) {
+  .filter-toggle { display: none; }
+}
+
+/* ---------- Location combobox ---------- */
+.combobox { position: relative; }
+.combobox__input { padding-right: 2.2em; }
+.combobox__clear {
+  position: absolute; right: 0.4em; top: 50%; transform: translateY(-50%);
+  width: 2em; height: 2em; border: none; background: transparent; color: var(--muted);
+  font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-sm);
+}
+.combobox__clear:hover { color: var(--accent); }
+.combobox__listbox {
+  position: absolute; top: calc(100% + 0.35rem); left: 0; z-index: 60;
+  /* Wider than the trigger field itself: at the dense 8-column desktop
+     filter grid the Location field is only ~140px wide, too narrow for
+     "Suburb, City" to sit on one line without wrapping awkwardly. The
+     popup is a normal overlay (elevated z-index, closes on selection/
+     blur), so it's free to be wider than what triggered it. */
+  min-width: 100%; width: max-content; max-width: min(320px, 90vw);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  max-height: 280px; overflow-y: auto;
+  list-style: none; margin: 0; padding: 0.3rem 0;
+}
+.combobox__listbox[hidden] { display: none; }
+.combobox__listbox li[role="option"] {
+  padding: 0.6em 0.9em; cursor: pointer; font-size: 0.92rem; white-space: nowrap;
+  min-height: 44px; box-sizing: border-box; display: flex; align-items: center;
+}
+.combobox__listbox li[role="option"].is-active,
+.combobox__listbox li[role="option"]:hover { background: var(--stone); }
+.combobox__option-suburb { color: var(--ink); font-weight: 600; }
+.combobox__option-city { color: var(--muted); font-size: 0.88em; margin-left: 0.15em; }
+.combobox__empty { padding: 0.8em 0.9em; color: var(--muted); font-size: 0.88rem; }
+
+/* ---------- Load More ---------- */
+.load-more { text-align: center; margin-top: var(--space-xl); }
+.load-more__progress { margin-top: 0.6em; font-size: 0.8rem; color: var(--muted); }
 .sort-field select { border: 1px solid var(--line); background: var(--surface); padding: 0.5em 0.8em; border-radius: var(--radius-sm); font-family: inherit; }
 
 .empty-state { text-align: center; padding: var(--space-2xl) var(--space-md); color: var(--muted); }
@@ -273,7 +371,7 @@
   border: 1px solid var(--line-soft);
 }
 .gallery__fallback {
-  aspect-ratio: 16/9; max-height: 420px;
+  width: 100%; aspect-ratio: 16/9; max-height: 420px;
   display: flex; align-items: center; justify-content: center;
   background: var(--stone);
 }

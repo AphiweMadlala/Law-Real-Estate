@@ -52,9 +52,9 @@ function sellPage(company) {
         <h2>Request a no-obligation property appraisal</h2>
         <p class="muted">Speak directly to the Glenanda head office, or reach out to an agent local to your suburb via the <a href="${withBase("/team.html")}" style="color:#fff; text-decoration:underline;">team page</a>.</p>
         <div class="hero__actions" style="justify-content:center; margin-top: var(--space-md);">
-          <a href="tel:+27116823865" class="btn btn-accent">Call +27 (0)11 682 3865</a>
-          <a href="mailto:laura@lawrealestate.co.za?subject=Property%20Appraisal%20Request" class="btn btn-outline" style="border-color:rgba(251,248,242,0.4); color:#fff;">Email LAW</a>
-          <a href="https://wa.me/27833651733" target="_blank" rel="noopener" class="btn btn-outline" style="border-color:rgba(251,248,242,0.4); color:#fff;">WhatsApp</a>
+          <a href="tel:+27116823865" class="btn btn-accent" data-event="seller_enquiry_click" data-enquiry-channel="phone">Call +27 (0)11 682 3865</a>
+          <a href="mailto:laura@lawrealestate.co.za?subject=Property%20Appraisal%20Request" class="btn btn-outline" style="border-color:rgba(251,248,242,0.4); color:#fff;" data-event="seller_enquiry_click" data-enquiry-channel="email">Email LAW</a>
+          <a href="https://wa.me/27833651733" target="_blank" rel="noopener" class="btn btn-outline" style="border-color:rgba(251,248,242,0.4); color:#fff;" data-event="seller_enquiry_click" data-enquiry-channel="whatsapp">WhatsApp</a>
         </div>
       </div>
     </section>

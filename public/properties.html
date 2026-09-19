@@ -63,7 +63,17 @@
 
     <section class="section--tight">
       <div class="container">
-        <form class="filters-bar" id="filtersForm">
+        <form class="filters-bar" id="filtersForm" data-event="filter_used" aria-label="Filter properties">
+          <div class="filters-bar__head">
+            <h2 class="filters-bar__heading">Filters</h2>
+            <button type="button" class="filters-bar__close" id="filterDrawerClose" aria-label="Close filters">&times;</button>
+          </div>
+
+          <div class="field field--search">
+            <label for="fSearch">Search</label>
+            <input type="text" id="fSearch" name="search" placeholder="e.g. 6751 or Sandton" autocomplete="off" inputmode="search" />
+          </div>
+
           <div class="field">
             <label for="fStatus">Status</label>
             <select id="fStatus" name="status">
@@ -72,12 +82,27 @@
               <option value="For Sale">For Sale</option>
             </select>
           </div>
+
           <div class="field">
             <label for="fLocation">Location</label>
-            <select id="fLocation" name="location">
-              <option value="">Any suburb</option>
-            </select>
+            <div class="combobox" id="locationCombobox">
+              <input
+                type="text"
+                id="fLocation"
+                class="combobox__input"
+                role="combobox"
+                aria-expanded="false"
+                aria-controls="fLocationListbox"
+                aria-autocomplete="list"
+                autocomplete="off"
+                placeholder="Any suburb"
+              />
+              <input type="hidden" name="location" id="fLocationValue" />
+              <button type="button" class="combobox__clear" id="fLocationClear" aria-label="Clear location" hidden>&times;</button>
+              <ul class="combobox__listbox" id="fLocationListbox" role="listbox" aria-label="Suburbs" tabindex="-1" hidden></ul>
+            </div>
           </div>
+
           <div class="field">
             <label for="fType">Property Type</label>
             <select id="fType" name="type">
@@ -112,11 +137,20 @@
               <option value="3">3+</option>
             </select>
           </div>
-          <button type="button" class="btn btn-outline btn-sm" id="resetFilters">Reset</button>
+
+          <div class="filters-bar__actions">
+            <button type="button" class="btn btn-outline btn-sm" id="resetFilters">Reset</button>
+            <button type="button" class="btn btn-primary btn-sm filters-bar__apply" id="filterApply">Apply Filters</button>
+          </div>
         </form>
 
         <div class="results-bar">
-          <p class="results-count" id="resultsCount">Loading&hellip;</p>
+          <div class="results-bar__left">
+            <p class="results-count" id="resultsCount">Loading&hellip;</p>
+            <button type="button" class="btn btn-outline btn-sm filter-toggle" id="filterToggle" aria-haspopup="dialog" aria-controls="filtersForm" aria-expanded="false">
+              Filters<span class="filter-toggle__badge" id="filterCount" hidden>0</span>
+            </button>
+          </div>
           <div class="sort-field">
             <label for="sortSelect">Sort by</label>
             <select id="sortSelect">
@@ -132,9 +166,13 @@
           <h3>No properties match those filters</h3>
           <p>Try widening your price range or clearing a filter.</p>
         </div>
+        <div class="load-more" id="loadMoreWrap" hidden>
+          <button type="button" class="btn btn-outline" id="loadMoreBtn">Load More Properties</button>
+          <p class="load-more__progress" id="loadMoreProgress"></p>
+        </div>
 
         <hr class="divider" style="margin-top: var(--space-2xl);" />
-        <p class="muted text-center" style="margin-top: var(--space-md);">Know the reference number of a specific listing? <a href="/Law-Real-Estate/contact.html" class="link-underline">Contact us</a> and quote it &mdash; e.g. Ref&nbsp;#6893.</p>
+        <p class="muted text-center" style="margin-top: var(--space-md);">Know the reference number of a specific listing? Search it above, or <a href="/Law-Real-Estate/contact.html" class="link-underline">contact us</a> and quote it &mdash; e.g. Ref&nbsp;#6893.</p>
       </div>
     </section>
   </main>

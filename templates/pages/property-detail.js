@@ -61,7 +61,7 @@ function galleryHtml(images, title, reference) {
   </div>`;
 }
 
-function agentCardHtml(agent) {
+function agentCardHtml(agent, reference) {
   // Some property-agent records (e.g. the head-office contact) have a real
   // name/mobile/email but no stable agent ID, photo, or profile page — that
   // is still genuinely useful contact info and should render, just without
@@ -72,14 +72,15 @@ function agentCardHtml(agent) {
     return `<div class="agent-card"><p class="muted">Contact LAW Real Estate for more information on this property.</p></div>`;
   }
 
+  const refAttr = reference ? ` data-property-ref="${escapeHtml(reference)}"` : "";
   const waLink = agent.whatsappNumber
-    ? `<a class="icon-btn icon-btn--whatsapp" href="https://wa.me/${agent.whatsappNumber}" target="_blank" rel="noopener">WhatsApp</a>`
+    ? `<a class="icon-btn icon-btn--whatsapp" href="https://wa.me/${agent.whatsappNumber}" target="_blank" rel="noopener" data-event="property_whatsapp_click"${refAttr}>WhatsApp</a>`
     : "";
   const callLink = agent.mobile
-    ? `<a class="icon-btn" href="${telHref(agent.mobile)}">Call</a>`
+    ? `<a class="icon-btn" href="${telHref(agent.mobile)}" data-event="property_phone_click"${refAttr}>Call</a>`
     : "";
   const emailLink = agent.email
-    ? `<a class="icon-btn" href="mailto:${agent.email}">Email</a>`
+    ? `<a class="icon-btn" href="mailto:${agent.email}" data-event="property_email_click"${refAttr}>Email</a>`
     : "";
 
   const photoHtml = agent.photo
@@ -175,13 +176,13 @@ function propertyDetailPage(property, allProperties) {
 
           <aside class="detail-sidebar">
             <div class="stack" style="gap: var(--space-md); position:sticky; top: 6.5rem;">
-              ${agentCardHtml(primaryAgent)}
+              ${agentCardHtml(primaryAgent, property.reference)}
               <div class="office-card">
                 <h3 style="font-size:1rem;">Enquire About This Property</h3>
                 <p class="muted" style="font-size:0.85rem;">Quote reference <strong>#${escapeHtml(property.reference)}</strong> when you get in touch.</p>
                 <div class="contact-actions">
-                  <a href="tel:+27116823865" class="btn btn-primary btn-sm">Call Office</a>
-                  <a href="mailto:laura@lawrealestate.co.za?subject=Enquiry%20-%20Ref%20${encodeURIComponent(property.reference)}" class="btn btn-outline btn-sm">Email Enquiry</a>
+                  <a href="tel:+27116823865" class="btn btn-primary btn-sm" data-event="property_phone_click" data-property-ref="${escapeHtml(property.reference)}">Call Office</a>
+                  <a href="mailto:laura@lawrealestate.co.za?subject=Enquiry%20-%20Ref%20${encodeURIComponent(property.reference)}" class="btn btn-outline btn-sm" data-event="property_email_click" data-property-ref="${escapeHtml(property.reference)}">Email Enquiry</a>
                 </div>
               </div>
             </div>
