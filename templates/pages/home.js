@@ -19,11 +19,23 @@ function homePage({ company, notableSales, developments, agents, properties }) {
     })
     .slice(0, 3);
 
+  // The hero photo is picked dynamically from live "For Sale" inventory
+  // (highest price with a real photo) rather than a hardcoded reference —
+  // a fixed reference number would silently start pointing at a sold-out,
+  // no-longer-marketed listing's photo the moment that property sells.
+  const heroProperty = properties
+    .filter((p) => p.status === "For Sale" && p.images && p.images.length)
+    .sort((a, b) => (b.price || 0) - (a.price || 0))[0];
+  const heroImage = heroProperty ? heroProperty.images[0] : "/images/brand/placeholder.svg";
+  const heroAlt = heroProperty
+    ? `${escapeHtml(heroProperty.propertyTypeDisplay || "Residence")} in ${escapeHtml(heroProperty.suburb)}, ${escapeHtml(heroProperty.city)}, marketed by LAW Real Estate`
+    : "LAW Real Estate";
+
   const bodyHtml = `${header("/")}
   <main id="main">
     <section class="hero">
       <div class="hero__media">
-        <img src="${withBase("/images/properties/6751/1.jpg")}" alt="Grand double-storey residence in Cornwall Hill, Centurion, marketed by LAW Real Estate" width="1600" height="1000" />
+        <img src="${withBase(heroImage)}" alt="${heroAlt}" width="1600" height="1000" />
       </div>
       <div class="hero__scrim"></div>
       <div class="container hero__content">
@@ -187,7 +199,7 @@ function homePage({ company, notableSales, developments, agents, properties }) {
     title: "LAW Real Estate — Johannesburg Residential Property Specialists",
     description: "LAW Real Estate: residential resale specialists across Johannesburg's southern suburbs, Sandton and Randburg, with a boutique new-developments division. Teamwork from the team that works.",
     canonical: `${SITE_URL}/`,
-    ogImage: `${SITE_URL}/images/properties/6751/1.jpg`,
+    ogImage: `${SITE_URL}${heroImage}`,
     structuredData: {
       "@context": "https://schema.org",
       "@type": "RealEstateAgent",
